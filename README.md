@@ -123,7 +123,11 @@ let someIntArray : [Int]? = [11, 22, 33]
 
 I think this should cover all the cases
 
-# Optional collection has values 
+# Optional collection has values is nil or empty
+
+A lot of ifology is made when working whit a collection inside a Optional context. Those properties should help.
+
+## hasElements
 
 ```swift
 noneString.hasElements      // false
@@ -134,3 +138,41 @@ noneIntArray.hasElements  // false
 emptyIntArray.hasElements // false
 someIntArray.hasElements  // true
 ```
+
+## isNoneOrEmpty
+
+```swift
+noneString.isNoneOrEmpty      // true
+emptySomeString.isNoneOrEmpty // true
+someSomeString.isNoneOrEmpty  // false
+
+noneIntArray.isNoneOrEmpty  // true
+emptyIntArray.isNoneOrEmpty // true
+someIntArray.isNoneOrEmpty  // false
+```
+
+## recoverFromEmpty
+
+This is called **only** if the underlying collection is empty. That is if your optional is `nil` or has some value this will not be called. As String is a collection I will only show examples for `[Int]?` :)
+
+```swift
+noneIntArray.recoverFromEmpty([42])  // nil
+emptyIntArray.recoverFromEmpty([42]) // [42]
+someIntArray.recoverFromEmpty([42])  // [11, 22, 33]
+```
+
+If you need a default value for the none and empty case then **default** is the thing you want.
+
+```swift
+noneIntArray.default([42])  // [42]
+emptyIntArray.default([42]) // [42]
+someIntArray.default([42])  // [11, 22, 33]
+```
+
+# That's it
+
+Hope it will help you :)
+
+If you want to find out more about me and some more Swift stuff then I invite you to my site: http://idoit.tech/en/
+
+Cheers! :D
