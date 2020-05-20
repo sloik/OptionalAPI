@@ -38,5 +38,3 @@ public extension Optional where Wrapped: Collection {
         isNoneOrEmpty ? producer() : self
     }
 }
-
-
