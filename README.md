@@ -5,7 +5,7 @@ Some common idioms popup when working with Optionals in Swift. Here is a bunch o
 
 # Installation
 
-Just copy and paste contents of `OptionalAPI.swift` and/or `UIViewAPI.swift` files 🍝 
+Just copy and paste contents of `OptionalAPI.swift` file 🍝 
 
 Or use SPM 😎
 
@@ -169,57 +169,6 @@ noneIntArray.default([42])  // [42]
 emptyIntArray.default([42]) // [42]
 someIntArray.default([42])  // [11, 22, 33]
 ```
-
-# One more thing
-
-Old:
-```swift
-view.isHidden = false
-```
-or
-```swift
-if view.isHidden == false {
-    // ...
-}
-```
-
-That's annoying... now you can do what you have always wanted!
-
-```swift
-if view.isVisible {
-    // ...
-}
-
-if view.isNotVisible {
-    // ...
-}
-
-if view.isNotHidden {
-    // ...
-}
-
-// with old
-if view.isHidden {
-    // ...
-}
-
-```
-
-And you can also set on those properties to if you want:
-
-```swift
-view.isVisible = true
-
-view.isNotVisible = true   
-
-view.isNotHidden = true
-
-// with old
-view.isHidden = true
-
-```
-
-That way you can **always** say what you want without inverted logic! 🤓
 
 # That's it
 
