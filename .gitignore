@@ -6,7 +6,6 @@ Issues
 Marketplace
 Explore
  
-@sloik 
 github
 /
 gitignore
@@ -19,10 +18,7 @@ gitignore
  Security 0
  Insights
 gitignore/Swift.gitignore
-@Coeur Coeur Improving the documentation of Objective-C and Swift files (#3133)
-e00d43a on 7 Aug 2019
-@KrauseFx@Coeur@shiftkey@juliancadi@fidmor89@FabrizioBrancati@czechboy0@adrfer@nwest@nrbrook@natestedman@martinblech@yanniks@pogramos@evfemist@dbburgess@chrisamanse@modocache@commscheck@bbodenmiller@maxxfrazer@chenyufeng1991
-90 lines (74 sloc)  2.12 KB
+
   
 # Xcode
 #
@@ -128,5 +124,5 @@ API
 Training
 Blog
 About
- Octotree
+Octotree
 Login to unlock more features
