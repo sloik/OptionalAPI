@@ -84,24 +84,24 @@ someOptional
 
 If `someOptional` started with `10` and we had luck (returningNone did not returned nil) then the final result is `12`. But if were not so lucky then the `mapNone` would take over and the final result would be `43`.
 
-You can also use more than one `mapNone` to handle any failures along the way. Oh and you can use an more friendly name `default` like so:
+You can also use more than one `mapNone` to handle any failures along the way. Oh and you can use an more friendly name `defaultSome` like so:
 
 ```swift
 someOptional
     // if someOptional is nil then start computation with default value
-    .default(5)     
+    .defaultSome(5)     
     // increment whatever is there         
     .andThen(maybeIncrement)
     // are you feeling lucky?
     .andThen(returningNone)  
     // cover your ass if you had bad luck
-    .default(42)
+    .defaultSome(42)
     // do some work with what's there
     .andThen(maybeIncrement) 
     // what... again
     .andThen(returningNone)  
     // saved
-    .default(10)
+    .defaultSome(10)
 ```
 
 I hope you can see that this gives you a very flexible API to handle Optionals in your code.
@@ -162,12 +162,12 @@ emptyIntArray.recoverFromEmpty([42]) // [42]
 someIntArray.recoverFromEmpty([42])  // [11, 22, 33]
 ```
 
-If you need a default value for the none and empty case then **default** is the thing you want.
+If you need a whenNone value for the none and empty case then **whenNone** is the thing you want.
 
 ```swift
-noneIntArray.default([42])  // [42]
-emptyIntArray.default([42]) // [42]
-someIntArray.default([42])  // [11, 22, 33]
+noneIntArray.defaultSome([42])  // [42]
+emptyIntArray.defaultSome([42]) // [42]
+someIntArray.defaultSome([42])  // [11, 22, 33]
 ```
 
 # That's it

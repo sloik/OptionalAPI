@@ -88,6 +88,22 @@ final class OptionalAPITests: XCTestCase {
                        someInt == nil)
     }
     
+    // MARK: - or
+    
+    func test_or_shouldNotChangeSome() {
+        XCTAssertEqual(
+            someInt.or(69),
+            someInt
+        )
+    }
+    
+    func test_or_shouldGiveDefaultValue() {
+        XCTAssertEqual(
+            noneInt.or(69),
+            69
+        )
+    }
+    
     // MARK: - andThen
     func test_andThen_should_operateOnWrappedValue() {
         // Arrange
@@ -208,9 +224,10 @@ final class OptionalAPITests: XCTestCase {
         
         // Act
         let result = noneInt
-            .default(defaultValue)
+            .defaultSome(defaultValue)
         
         // Assert
+        XCTAssertNotNil(result)
         XCTAssertEqual(defaultValue, result)
     }
     
@@ -220,9 +237,10 @@ final class OptionalAPITests: XCTestCase {
         
         // Act
         let result = someInt
-            .default(defaultValue)
+            .defaultSome(defaultValue)
         
         // Assert
+        XCTAssertNotNil(result)
         XCTAssertEqual(someInt, result)
     }
     
@@ -386,7 +404,7 @@ final class OptionalAPITests: XCTestCase {
         // Act
         XCTAssertEqual(
             noneString
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return stringDefault}()),
             
@@ -395,7 +413,7 @@ final class OptionalAPITests: XCTestCase {
         
         XCTAssertEqual(
             emptySomeString
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return stringDefault}()),
             
@@ -404,7 +422,7 @@ final class OptionalAPITests: XCTestCase {
         
         XCTAssertEqual(
             noneIntArray
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return intArrayDefault}()),
             
@@ -413,7 +431,7 @@ final class OptionalAPITests: XCTestCase {
         
         XCTAssertEqual(
             emptyIntArray
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return intArrayDefault}()),
             
@@ -422,7 +440,7 @@ final class OptionalAPITests: XCTestCase {
         
         XCTAssertEqual(
             noneInt
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return intDefault}()),
             
@@ -445,7 +463,7 @@ final class OptionalAPITests: XCTestCase {
         // Act
         XCTAssertEqual(
             someSomeString
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return stringDefault}()),
             
@@ -454,7 +472,7 @@ final class OptionalAPITests: XCTestCase {
         
         XCTAssertEqual(
             someIntArray
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return intArrayDefault}()),
             
@@ -463,7 +481,7 @@ final class OptionalAPITests: XCTestCase {
         
         XCTAssertEqual(
             someInt
-                .default({
+                .defaultSome({
                     didCallTransform.fulfill()
                     return intDefault}()),
             
@@ -473,7 +491,56 @@ final class OptionalAPITests: XCTestCase {
         // Assert
         waitForExpectations(timeout: 0.5)
     }
+    
+    func test_randomChaining_stuff() {
+        XCTAssertEqual(
+            someInt
+                .defaultSome(5)
+                .andThen({ $0 + 1 })
+                .andThen({ .none })
+                .defaultSome(42),
+            42,
+            "Final result should equal to the last default value"
+        )
+        
+        XCTAssertEqual(
+            noneInt
+                .defaultSome(5)
+                .andThen({ $0 + 1 })
+                .andThen({ .none })
+                .defaultSome(42),
+            42,
+            "Final result should equal to the last default value"
+        )
+        
+        XCTAssertEqual(
+            noneInt
+                .andThen({ $0 + 1 })
+                .defaultSome(42),
+            42,
+            "Final result should equal to the last default value"
+        )
+    }
 }
+
+
+//```swift
+//someOptional
+//    // if someOptional is nil then start computation with default value
+//    .default(5)
+//    // increment whatever is there
+//    .andThen(maybeIncrement)
+//    // are you feeling lucky?
+//    .andThen(returningNone)
+//    // cover your ass if you had bad luck
+//    .default(42)
+//    // do some work with what's there
+//    .andThen(maybeIncrement)
+//    // what... again
+//    .andThen(returningNone)
+//    // saved
+//    .default(10)
+//```
 
 
 

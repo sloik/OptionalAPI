@@ -2,6 +2,7 @@
 import Foundation
 
 public extension Optional {
+    typealias ProducerOfWrapped = () -> Wrapped
     
     var isNone: Bool {
         switch self {
@@ -19,9 +20,24 @@ public extension Optional {
     func andThen<T>(_ transform: (Wrapped) -> T?) -> T? { flatMap(transform) }
     
     @discardableResult
-    func mapNone(_ producer: @autoclosure () -> Wrapped) -> Wrapped? { isNone ? producer() : self }
+    func mapNone(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped? {
+        or(producer())
+    }
     
-    func `default`(_ producer: @autoclosure () -> Wrapped) -> Wrapped? { mapNone(producer()) }
+    @discardableResult
+    func defaultSome(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped? {
+        or(producer())
+    }
+    
+    @discardableResult
+    func or(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped {
+        switch self {
+        case .none:
+            return producer()
+        case .some(let value):
+            return value
+        }
+    }
 }
 
 public extension Optional where Wrapped: Collection {
@@ -34,7 +50,13 @@ public extension Optional where Wrapped: Collection {
         map({ collection in collection.isEmpty ? producer() : collection })
     }
     
-    func `default`(_ producer: @autoclosure () -> Wrapped) -> Wrapped? {
-        isNoneOrEmpty ? producer() : self
+    func defaultSome(_ producer: @autoclosure () -> Wrapped) -> Wrapped {
+        switch self {
+        case .none:
+            return producer()
+            
+        case .some(let collection):
+            return collection.isEmpty ? producer() : collection
+        }
     }
 }
