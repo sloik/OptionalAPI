@@ -128,7 +128,7 @@ I think this should cover all the cases
 
 A lot of ifology is made when working whit a collection inside a Optional context. Those properties should help.
 
-## hasElements
+## `hasElements`
 
 ```swift
 noneString.hasElements      // false
@@ -140,7 +140,7 @@ emptyIntArray.hasElements // false
 someIntArray.hasElements  // true
 ```
 
-## isNoneOrEmpty
+## `isNoneOrEmpty`
 
 ```swift
 noneString.isNoneOrEmpty      // true
@@ -152,7 +152,7 @@ emptyIntArray.isNoneOrEmpty // true
 someIntArray.isNoneOrEmpty  // false
 ```
 
-## recoverFromEmpty
+## `recoverFromEmpty`
 
 This is called **only** if the underlying collection is empty. That is if your optional is `nil` or has some value this will not be called. As String is a collection I will only show examples for `[Int]?` :)
 
@@ -169,6 +169,25 @@ noneIntArray.defaultSome([42])  // [42]
 emptyIntArray.defaultSome([42]) // [42]
 someIntArray.defaultSome([42])  // [11, 22, 33]
 ```
+
+# `or`
+
+There are cases when you need an actual result from an Optional `or` a default non optional value. This is exactly the case for `or`
+
+```swift
+let noneInt: Int? = .none
+let someInt: Int? = .some(42)
+
+var result: Int = someInt.or(69) // 42
+```
+
+In this case `result` variable stores value `42`. It's an honest Int not an optional. But what happens when it's `none`:
+
+```swift
+result = noneInt.or(69) // 69
+```
+
+Here the _final_ result is `69` as everything evaluates to `none`. Once again after `or` you have a honest value or some default.
 
 # That's it
 
