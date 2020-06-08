@@ -72,15 +72,18 @@ final class OptionalAPITests: XCTestCase {
     
     func test_isNotNone_property() throws {
         // Act & Assert
+        XCTAssertFalse(noneInt.isNotNone)
         XCTAssertEqual(noneInt.isNotNone,
                        noneInt != nil)
         
+        XCTAssertTrue (someInt.isNotNone)
         XCTAssertEqual(someInt.isNotNone,
                        someInt != nil)
     }
     
     func test_isNotSome_property() throws {
         // Act & Assert
+        XCTAssertTrue(noneInt.isNotSome)
         XCTAssertEqual(noneInt.isNotSome,
                        noneInt == nil)
         
