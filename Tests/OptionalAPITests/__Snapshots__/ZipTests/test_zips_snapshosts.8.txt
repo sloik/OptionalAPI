@@ -1,0 +1,5 @@
+▿ Optional<(Int, Int, Int)>
+  ▿ some: (3 elements)
+    - .0: 1
+    - .1: 2
+    - .2: 3

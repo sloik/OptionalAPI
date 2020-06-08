@@ -189,6 +189,35 @@ result = noneInt.or(69) // 69
 
 Here the _final_ result is `69` as everything evaluates to `none`. Once again after `or` you have a honest value or some default.
 
+# `zip`
+
+Zip function is defined on sequences in Swift. This is a nice extension to have it on Optional. 
+
+Let say you have some computations or values that are optional. It might be tedious to `if let` them. Using `zip` you just flip the container inside out (check out how type is transormed in this [documentation on zip in haskell](https://hoogle.haskell.org/?hoogle=zip)) and `map` on the result. 
+
+```swift
+let userName: String? 
+let userLast: String?
+let userAge: Int? 
+
+zip(userName, userLast, userAge)
+    .map{ (name: String, last: String, age: Int) in 
+        // Working with not optional values
+     }
+```
+
+And `map` can be _replaced_ with `andThen`:
+
+```swift
+zip(userName, userLast, userAge)
+    .andThen{ (name: String, last: String, age: Int) in 
+        // Working with not optional values
+     }
+```
+
+Under the hood `map` is used by it reads _better_.
+
+
 # That's it
 
 Hope it will help you :)

@@ -5,20 +5,33 @@ import PackageDescription
 
 let package = Package(
     name: "OptionalAPI",
+    platforms: [
+        .macOS(.v10_13),
+        .iOS(.v11),
+        .tvOS(.v11),
+        .watchOS(.v3)
+    ],
     products: [
         .library(
             name: "OptionalAPI",
             type: .dynamic,
             targets: ["OptionalAPI"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(name: "SnapshotTesting",
+                 url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+                 from: "1.7.2"),
+    ],
     targets: [
-
         .target(
             name: "OptionalAPI",
             dependencies: []),
+        
         .testTarget(
             name: "OptionalAPITests",
-            dependencies: ["OptionalAPI"]),
+            dependencies: [
+                "OptionalAPI",
+                "SnapshotTesting",
+        ]),
     ]
 )
