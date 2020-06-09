@@ -247,6 +247,43 @@ final class OptionalAPITests: XCTestCase {
         XCTAssertEqual(someInt, result)
     }
     
+    
+    func test_or_typeShouldBe_wrapped() {
+        var intExpected: Int = someInt.or(69)
+        intExpected = noneInt.or(69)
+        
+        // Redundant test but show how type system
+        // is checking that's correct.
+        XCTAssertTrue(
+            intExpected is Int
+        )
+    }
+    
+    func test_or_forNone_shouldReturn_providedDefault() {
+        XCTAssertEqual(
+            noneInt.or(69),
+            69
+        )
+        
+        XCTAssertEqual(
+            noneString.or("default string"),
+            "default string"
+        )
+    }
+    
+    func test_or_forSome_shouldReturn_wrappedValue() {
+        XCTAssertEqual(
+            someInt.or(69),
+            42
+        )
+        
+        XCTAssertEqual(
+            someSomeString.or("default string"),
+            "some string"
+        )
+    }
+    
+    
     // MARK: - Collections Properties
     
     func test_isNoneOrEmpty_property() {

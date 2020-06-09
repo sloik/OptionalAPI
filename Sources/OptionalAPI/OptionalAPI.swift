@@ -241,12 +241,7 @@ public extension Optional {
      */
     @discardableResult
     func or(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped {
-        switch self {
-        case .none:
-            return producer()
-        case .some(let value):
-            return value
-        }
+        self ?? producer()
     }
 }
 
