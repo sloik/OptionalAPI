@@ -51,7 +51,7 @@ public extension Optional {
      */
     var isSome: Bool { isNone == false }
     
-   
+    
     /**
      *  **True** if optional instance is ````.some(Wrapped)````.
      *  You can also read it as **isSome**.
@@ -220,6 +220,7 @@ public extension Optional {
         or(producer())
     }
     
+    
     /**
      * `or` is a handy unwrapper of the wrapped value inside of optional **but** you must provide
      *  a `default` value in case the Optional is `nil`. That way it will always return
@@ -246,14 +247,77 @@ public extension Optional {
 }
 
 public extension Optional where Wrapped: Collection {
-    var isNoneOrEmpty: Bool { self.map{ $0.isEmpty } ?? true }
     
-    var hasElements: Bool { self.map{ $0.isEmpty == false } ?? false }
-        
+    /**
+     * **True** if optional instance is ````.some```` **and** collections
+     * **HAS** elements ````isEmpty == false````
+     *
+     * When working with a Optional Collection the interesting _question_ is
+     * does it **hasElements**. Use this property to conveniently answer it.
+     *
+     * ````
+     * let noneString: String? = .none
+     * noneString.hasElements // false
+     *
+     * let emptySomeString: String? = "" // empty string
+     * emptySomeString.hasElements       // false
+     *
+     * let someSomeString: String? = "some string"
+     * someSomeString.hasElements // true
+     *
+     *
+     * let noneIntArray: [Int]? = .none
+     * noneIntArray.hasElements // false
+     *
+     * let emptyIntArray: [Int]? = []
+     * emptyIntArray.hasElements // false
+     *
+     * let someIntArray: [Int]? = [11, 22, 33]
+     * someIntArray.hasElements // true
+     * ````
+     */
+    var hasElements: Bool {
+        map( \.isEmpty ) // get isEmpty value from the wrapped collection
+            .map( ! )    // negation; if was empty then i `has NOT Elements`
+            .or(false)   // was none so definitely does not have elements
+    }
+    
+    
+    /**
+     * **True** if optional instance is ````.none```` **or** collections ````isEmpty````.
+     *
+     * Very often when working with a Optional Collection the absence of value and
+     *  it being empty is handled in the same way.
+     *
+     * ````
+     * let noneString: String? = .none
+     * noneString.isNoneOrEmpty // true
+     *
+     * let emptySomeString: String? = ""
+     * emptySomeString.isNoneOrEmpty // true
+     *
+     * let someSomeString: String? = "some string"
+     * someSomeString.isNoneOrEmpty // false
+     *
+     *
+     * let noneIntArray: [Int]? = .none
+     * noneIntArray.isNoneOrEmpty // true
+     *
+     * let emptyIntArray: [Int]? = []
+     * emptyIntArray.isNoneOrEmpty // true
+     *
+     * let someIntArray: [Int]? = [11, 22, 33]
+     * someIntArray.isNoneOrEmpty // false
+     * ````
+     */
+    var isNoneOrEmpty: Bool { map( \.isEmpty ) ?? true }
+
+    
     @discardableResult
     func recoverFromEmpty(_ producer: @autoclosure () -> Wrapped) -> Wrapped? {
         map({ collection in collection.isEmpty ? producer() : collection })
     }
+    
     
     func defaultSome(_ producer: @autoclosure () -> Wrapped) -> Wrapped {
         switch self {
