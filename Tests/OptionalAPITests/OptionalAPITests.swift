@@ -432,65 +432,6 @@ final class OptionalAPITests: XCTestCase {
         waitForExpectations(timeout: 0.5)
     }
     
-    func test_default_shouldBeCalledFor_NoneOrEmptyCollection(){
-        // Arrange
-        let didCallTransform = expectation(description: "recover was not called")
-        didCallTransform.expectedFulfillmentCount = 5
-        
-        let stringDefault = "default string"
-        let intArrayDefault = [5,10,15]
-        let intDefault = 24
-        
-        // Act
-        XCTAssertEqual(
-            noneString
-                .defaultSome({
-                    didCallTransform.fulfill()
-                    return stringDefault}()),
-            
-            stringDefault
-        )
-        
-        XCTAssertEqual(
-            emptySomeString
-                .defaultSome({
-                    didCallTransform.fulfill()
-                    return stringDefault}()),
-            
-            stringDefault
-        )
-        
-        XCTAssertEqual(
-            noneIntArray
-                .defaultSome({
-                    didCallTransform.fulfill()
-                    return intArrayDefault}()),
-            
-            intArrayDefault
-        )
-        
-        XCTAssertEqual(
-            emptyIntArray
-                .defaultSome({
-                    didCallTransform.fulfill()
-                    return intArrayDefault}()),
-            
-            intArrayDefault
-        )
-        
-        XCTAssertEqual(
-            noneInt
-                .defaultSome({
-                    didCallTransform.fulfill()
-                    return intDefault}()),
-            
-            intDefault
-        )
-        
-        // Assert
-        waitForExpectations(timeout: 0.5)
-    }
-    
     func test_default_shouldNotBeCalledFor_NotEmptyCollectionsOrSomeValues(){
         // Arrange
         let didCallTransform = expectation(description: "recover was not called")

@@ -222,7 +222,10 @@ public extension Optional {
     
     
     /**
-     * `or` is a handy unwrapper of the wrapped value inside of optional **but** you must provide
+     *  - Parameters:
+     *      - producer: Value ot type `Wrapped` to be used in case of `.none`.
+     *
+     *  `or` is a handy unwrapper of the wrapped value inside of optional **but** you must provide
      *  a `default` value in case the Optional is `nil`. That way it will always return
      *  a **not optional** instance to work with.
      *
@@ -239,6 +242,40 @@ public extension Optional {
      * ````
      *
      *  Each time the final result was a true `Bool` not an `Bool?`.
+     *
+     *  - Note: You can use `.init` and static method available on type to:
+     *
+     * ````
+     * let noneInt: Int? = nil
+     * noneInt.or( .init() ) // 0
+     * noneInt.or( .zero   ) // 0
+     *
+     * let noneDouble: Double? = nil
+     * noneDouble.or( .init() ) // 0
+     *
+     * let defaults: UserDefaults? = nil
+     * defaults.or( .standard ) // custom or "standard"
+     *
+     * let view: UIView? = nil
+     * view.or( .init() )
+     *
+     * // or any other init ;)
+     * view.or( .init(frame: .zero) )
+     *
+     * // Collections
+     * let noneIntArray : [Int]? = .none
+     * noneIntArray.or( .init() ) // []
+     *
+     * let emptySomeString: String? = ""
+     * noneString.or( .init() ) // ""
+     *
+     * // Enums
+     * enum Either {
+     *     case left, right
+     * }
+     * let noneEither: Either? = nil
+     * noneEither.or(.right)
+     * ````
      */
     @discardableResult
     func or(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped {
@@ -278,7 +315,7 @@ public extension Optional where Wrapped: Collection {
      */
     var hasElements: Bool {
         map( \.isEmpty ) // get isEmpty value from the wrapped collection
-            .map( ! )    // negation; if was empty then i `has NOT Elements`
+            .map( ! )    // negation; if was empty then it `has NOT Elements`
             .or(false)   // was none so definitely does not have elements
     }
     
@@ -313,19 +350,30 @@ public extension Optional where Wrapped: Collection {
     var isNoneOrEmpty: Bool { map( \.isEmpty ) ?? true }
 
     
+    
+    /**
+     *  - Parameters:
+     *      - producer: Value ot type `Wrapped` to be used in case of wrapped collection `isEmpty`.
+     *
+     *  This is called **only** if the underlying collection is empty. If optional is `nil`
+     *  or has some value. Then this function will not be called.
+     *
+     *  ````
+     *   let noneIntArray : [Int]? = .none
+     *   noneIntArray.recoverFromEmpty( [42] )  // nil ; is not a empty collection
+     *   noneIntArray.defaultSome( [42] )       // [42]; use defaultSome for .none case
+     *
+     *   let emptyIntArray: [Int]? = []
+     *   emptyIntArray.recoverFromEmpty( [42] ) // [42] ; was `some` and collection was empty
+     *   emptyIntArray.defaultSome( [42] )      // [] ; was `some` case
+     *
+     *   let someIntArray : [Int]? = [11, 22, 33]
+     *   someIntArray.recoverFromEmpty( [42] )  // [11, 22, 33] ; was `some` and collection has elements
+     *   someIntArray.defaultSome( [42] )       // [11, 22, 33] ; was `some` and collection has elements
+     *   ````
+     */
     @discardableResult
     func recoverFromEmpty(_ producer: @autoclosure () -> Wrapped) -> Wrapped? {
         map({ collection in collection.isEmpty ? producer() : collection })
-    }
-    
-    
-    func defaultSome(_ producer: @autoclosure () -> Wrapped) -> Wrapped {
-        switch self {
-        case .none:
-            return producer()
-            
-        case .some(let collection):
-            return collection.isEmpty ? producer() : collection
-        }
     }
 }
