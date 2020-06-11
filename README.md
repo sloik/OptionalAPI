@@ -162,11 +162,11 @@ emptyIntArray.recoverFromEmpty([42]) // [42]
 someIntArray.recoverFromEmpty([42])  // [11, 22, 33]
 ```
 
-If you need a whenNone value for the none and empty case then **whenNone** is the thing you want.
+If you need a whenNone value for the none and empty case then **defaultSome** is the thing you want.
 
 ```swift
 noneIntArray.defaultSome([42])  // [42]
-emptyIntArray.defaultSome([42]) // [42]
+emptyIntArray.defaultSome([42]) // []
 someIntArray.defaultSome([42])  // [11, 22, 33]
 ```
 
@@ -188,6 +188,52 @@ result = noneInt.or(69) // 69
 ```
 
 Here the _final_ result is `69` as everything evaluates to `none`. Once again after `or` you have a honest value or some default.
+
+## default value with `or`
+
+If the wrapped type has a empty initializer (init that takes no arguments) you can call it to get an instance:
+
+```swift
+someOptional
+    .or(.init()) // creates an instance
+```
+
+To put it in a context if you have some optionals you can use this to get _zero_ value like so:
+
+```swift
+let noneInt: Int? = nil
+noneInt.or( .init() ) // 0
+noneInt.or( .zero   ) // 0
+
+let noneDouble: Double? = nil
+noneDouble.or( .init() ) // 0
+
+let defaults: UserDefaults? = nil
+defaults.or( .standard ) // custom or "standard"
+
+let view: UIView? = nil
+view.or( .init() ) 
+
+// or any other init ;)
+view.or( .init(frame: .zero) )
+
+// Collections
+let noneIntArray : [Int]? = .none
+noneIntArray.or( .init() ) // []
+
+let emptySomeString: String? = ""
+noneString.or( .init() ) // ""
+
+// Enums
+enum Either {
+    case left, right
+}
+let noneEither: Either? = nil
+noneEither.or(.right)
+
+```
+
+Anything that you can call on this type (static methods) can be used here.
 
 # `zip`
 
