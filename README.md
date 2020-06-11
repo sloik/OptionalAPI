@@ -162,7 +162,7 @@ emptyIntArray.recoverFromEmpty([42]) // [42]
 someIntArray.recoverFromEmpty([42])  // [11, 22, 33]
 ```
 
-If you need a whenNone value for the none and empty case then **defaultSome** is the thing you want.
+If you need a default value for the none case then **defaultSome** is the thing you want.
 
 ```swift
 noneIntArray.defaultSome([42])  // [42]
