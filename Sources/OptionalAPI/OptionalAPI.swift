@@ -4,7 +4,7 @@ import Foundation
 public extension Optional {
     
     /**
-     Typealias for a closure capable of producing an instance od **Wrapped** type.
+     Type alias for a closure capable of producing an instance od **Wrapped** type.
      */
     typealias ProducerOfWrapped = () -> Wrapped
     
