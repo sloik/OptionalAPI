@@ -1,19 +1,6 @@
 import XCTest
 @testable import OptionalAPI
 
-// Systems Under Test
-let noneString     : String? = .none
-
-let emptySomeString: String? = ""
-let someSomeString : String? = "some string"
-
-let noneIntArray : [Int]? = .none
-let emptyIntArray: [Int]? = []
-let someIntArray : [Int]? = [11, 22, 33]
-
-let noneInt: Int? = .none
-let someInt: Int? = .some(42)
-
 final class OptionalAPITests: XCTestCase {
 
     func test_isNone_property() throws {
