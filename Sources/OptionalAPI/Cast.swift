@@ -2,12 +2,36 @@ import UIKit
 
 // MARK: - Free Function
 
+
+/// Curried version of `cast` function.
+/// - Parameter otherType: Type to which to cast eg. `String.self`
+/// - Returns: Function that expects an instance that will be _try_ to cast to the `T` type.
+///
+/// This form allows for easer composition. You provide configuration up
+/// front and pass the instance later.
+/// ```
+/// let casterToCustomVC: (Any) -> CustomVC? = cast(CustomVC.self)
+///
+/// // later in code..
+/// let someViewController: UIViewController? = ...
+/// someViewController
+///     .cast( CustomVC.self )
+///     .andThen({ (vc: CustomVC) in
+///     // work with a non optional instance of CustomVC
+///     })
+/// ```
 public func cast<T>(_ otherType: T.Type) -> (Any) -> T? {
     return { thing in
         cast(thing, to: T.self)
     }
 }
 
+
+/// Free function wrapping ```as``` keyword.
+/// - Parameters:
+///   - thing: Instance to be casted.
+///   - to: Type to which to cast eg. `String.self`
+/// - Returns: Some optional when cast succeeds or `none` otherwise.
 public func cast<T>(_ thing: Any, to: T.Type) -> T? {
     thing as? T
 }
@@ -15,6 +39,21 @@ public func cast<T>(_ thing: Any, to: T.Type) -> T? {
 // MARK: - Extension
 
 public extension Optional {
+    
+    /// Cast.
+    /// - Parameter type: Type to which to cast eg. `String.self`
+    /// - Returns: Some optional when cast succeeds or `none` otherwise.
+    ///
+    /// This form allows for easer composition. You provide configuration up
+    /// front and pass the instance later.
+    /// ```
+    /// let someViewController: UIViewController? = ...
+    /// someViewController
+    ///     .cast( CustomVC.self )
+    ///     .andThen({ (vc: CustomVC) in
+    ///     // work with a non optional instance of CustomVC
+    ///     })
+    /// ```
     func cast<T>(_ type: T.Type) -> T? {
         flatMap(
             OptionalAPI.cast(type)
