@@ -175,7 +175,7 @@ public extension Optional {
      */
     @discardableResult
     func mapNone(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped? {
-        or(producer())
+        or(producer)
     }
     
     
@@ -217,7 +217,7 @@ public extension Optional {
      */
     @discardableResult
     func defaultSome(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped? {
-        or(producer())
+        or(producer)
     }
     
     
@@ -279,6 +279,10 @@ public extension Optional {
      */
     @discardableResult
     func or(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped {
+        self.or(producer)
+    }
+    
+    func or(_ producer: ProducerOfWrapped) -> Wrapped {
         self ?? producer()
     }
 }

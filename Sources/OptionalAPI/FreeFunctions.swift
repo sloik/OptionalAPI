@@ -1,0 +1,64 @@
+
+import Foundation
+
+public func isNone<T>(_ optional: T?) -> Bool {
+    optional.isNone
+}
+
+public func isSome<T>(_ optional: T?) -> Bool {
+    optional.isSome
+}
+
+public func isNotNone<T>(_ optional: T?) -> Bool {
+    optional.isNotNone
+}
+
+public func isNotSome<T>(_ optional: T?) -> Bool {
+    optional.isNotSome
+}
+
+
+public func andThen<T, Wrapped>(
+    _ optional: Wrapped?,
+    _ transform: (Wrapped) -> T?
+    ) -> T? {
+    optional.andThen(transform)
+}
+
+
+public func or<T>(
+    _ optional: T?,
+    _ producer: () -> T
+) -> T {
+    optional.or(producer)
+}
+
+
+public func mapNone<T>(
+    _ optional: T?,
+    _ producer: @autoclosure () -> T
+    ) -> T? {
+    optional.or(producer)
+}
+
+public func mapNone<T>(
+    _ optional: T?,
+    _ producer: () -> T
+    ) -> T? {
+    optional.or(producer)
+}
+
+
+public func defaultSome<T>(
+    _ optional: T?,
+    _ producer: @autoclosure () -> T
+    ) -> T? {
+    optional.or(producer)
+}
+
+public func defaultSome<T>(
+    _ optional: T?,
+    _ producer: () -> T
+    ) -> T? {
+    optional.or(producer)
+}
