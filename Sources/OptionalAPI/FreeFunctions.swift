@@ -20,45 +20,76 @@ public func isNotSome<T>(_ optional: T?) -> Bool {
 
 public func andThen<T, Wrapped>(
     _ optional: Wrapped?,
-    _ transform: (Wrapped) -> T?
-    ) -> T? {
+    _ transform: (Wrapped) -> T?)
+    -> T?
+{
     optional.andThen(transform)
 }
 
 
 public func or<T>(
     _ optional: T?,
-    _ producer: () -> T
-) -> T {
+    _ producer: () -> T)
+    -> T
+{
     optional.or(producer)
 }
 
 
 public func mapNone<T>(
     _ optional: T?,
-    _ producer: @autoclosure () -> T
-    ) -> T? {
+    _ producer: @autoclosure () -> T)
+    -> T?
+{
     optional.or(producer)
 }
 
 public func mapNone<T>(
     _ optional: T?,
-    _ producer: () -> T
-    ) -> T? {
+    _ producer: () -> T)
+    -> T?
+{
     optional.or(producer)
 }
 
 
 public func defaultSome<T>(
     _ optional: T?,
-    _ producer: @autoclosure () -> T
-    ) -> T? {
+    _ producer: @autoclosure () -> T)
+    -> T?
+{
     optional.or(producer)
 }
 
 public func defaultSome<T>(
     _ optional: T?,
-    _ producer: () -> T
-    ) -> T? {
-    optional.or(producer)
+    _ producer: () -> T)
+    -> T? {
+        optional.or(producer)
+}
+
+// MARK: - Collections
+
+public func hasElements<T: Collection>(_ optional: T?) -> Bool {
+    optional.hasElements
+}
+
+public func isNoneOrEmpty<T: Collection>(_ optional: T?) -> Bool {
+    optional.isNoneOrEmpty
+}
+
+public func recoverFromEmpty<T: Collection>(
+    _ optional: T?,
+    _ producer: @autoclosure () -> T)
+    -> T?
+{
+    optional.recoverFromEmpty(producer)
+}
+
+public func recoverFromEmpty<T: Collection>(
+    _ optional: T?,
+    _ producer: () -> T)
+    -> T?
+{
+    optional.recoverFromEmpty(producer)
 }

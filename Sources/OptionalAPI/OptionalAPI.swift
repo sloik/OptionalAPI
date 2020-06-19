@@ -380,4 +380,8 @@ public extension Optional where Wrapped: Collection {
     func recoverFromEmpty(_ producer: @autoclosure () -> Wrapped) -> Wrapped? {
         map({ collection in collection.isEmpty ? producer() : collection })
     }
+    
+    func recoverFromEmpty(_ producer: () -> Wrapped) -> Wrapped? {
+        map({ collection in collection.isEmpty ? producer() : collection })
+    }
 }
