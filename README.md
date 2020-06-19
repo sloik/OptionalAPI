@@ -263,6 +263,26 @@ zip(userName, userLast, userAge)
 
 Under the hood `map` is used by it reads _better_.
 
+# `cast`
+
+Have you ever wrote code similar to this one:
+
+```swift
+if let customVC = mysteryVC as? CustomVC {
+    // do stuff
+}
+```
+
+With `cast` you can streamline your code to this:
+
+```swift
+ let someViewController: UIViewController? = ...
+ someViewController
+     .cast( CustomVC.self )
+     .andThen({ (vc: CustomVC) in
+        // work with a non optional instance of CustomVC
+     })
+```
 
 # That's it
 

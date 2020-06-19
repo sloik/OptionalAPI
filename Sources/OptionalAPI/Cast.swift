@@ -17,7 +17,7 @@ import UIKit
 /// someViewController
 ///     .cast( CustomVC.self )
 ///     .andThen({ (vc: CustomVC) in
-///     // work with a non optional instance of CustomVC
+///         // work with a non optional instance of CustomVC
 ///     })
 /// ```
 public func cast<T>(_ otherType: T.Type) -> (Any) -> T? {
