@@ -76,4 +76,52 @@ class CastTests: XCTestCase {
         
         XCTAssertNil(result)
     }
+    
+    func test_cast_shouldProduce_sameResultAsInlinedCast() {
+        XCTAssertEqual(
+            noneString.andThen({ $0 as? String }),
+            noneString.cast(String.self)
+        )
+        XCTAssertEqual(
+            noneString.andThen({ $0 as? Int }),
+            noneString.cast(Int.self)
+        )
+        
+        XCTAssertEqual(
+            anyString.andThen({ $0 as? String }),
+            anyString.cast(String.self)
+        )
+        XCTAssertEqual(
+            anyString.andThen({ $0 as? Int }),
+            anyString.cast(Int.self)
+        )
+        
+        XCTAssertEqual(
+            anyNoneString.andThen({ $0 as? String }),
+            anyNoneString.cast(String.self)
+        )
+        XCTAssertEqual(
+            anyNoneString.andThen({ $0 as? Int }),
+            anyNoneString.cast(Int.self)
+        )
+        
+        XCTAssertEqual(
+            anyInt.andThen({ $0 as? String }),
+            anyInt.cast(String.self)
+        )
+        XCTAssertEqual(
+            anyInt.andThen({ $0 as? Int }),
+            anyInt.cast(Int.self)
+        )
+        
+        XCTAssertEqual(
+            anyNoneInt.andThen({ $0 as? String }),
+            anyNoneInt.cast(String.self)
+        )
+        XCTAssertEqual(
+            anyNoneInt.andThen({ $0 as? Int }),
+            anyNoneInt.cast(Int.self)
+        )
+        
+    }
 }
