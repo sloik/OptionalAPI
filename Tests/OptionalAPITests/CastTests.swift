@@ -122,6 +122,21 @@ class CastTests: XCTestCase {
             anyNoneInt.andThen({ $0 as? Int }),
             anyNoneInt.cast(Int.self)
         )
+    }
+    
+    func test_randomCombinators() {
+        XCTAssertEqual(
+            anyInt
+                .cast(Int.self)
+                .andThen({ $0 + 1 }),
+            43
+        )
         
+        XCTAssertEqual(
+            anyString
+                .cast(String.self)
+                .andThen({ $0.uppercased() }),
+            "ANY STRING"
+        )        
     }
 }
