@@ -2,18 +2,13 @@ import XCTest
 @testable import OptionalAPI
 
 let codableStruct: CodableStruct = .init(number: 69, message: "codable message")
-let codableStructAsData: Data = {
-    
-    let jsonString: String =
+let codableStructAsData: Data =
     """
     {
         "number": 55,
         "message": "data message"
     }
-    """
-    
-    return jsonString.data(using: .utf8)!
-}()
+    """.data(using: .utf8)!
 
 final class OptionalCodableTests: XCTestCase {
 
