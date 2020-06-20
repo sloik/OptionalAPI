@@ -21,7 +21,7 @@ let anyNoneInt: Any? = noneInt
 
 // MARK: - Codable
 
-struct CodableStruct: Codable {
+struct CodableStruct: Codable, Equatable {
     let number: Int
     let message: String
 }
