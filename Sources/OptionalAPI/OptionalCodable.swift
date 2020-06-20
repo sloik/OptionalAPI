@@ -1,7 +1,8 @@
 import Foundation
 
+// MARK: - Extension
 extension Optional where Wrapped == Data {
-    func decode<T: Decodable>(_ to: T.Type) -> T? {
+    func decode<T: Decodable>(_ to: T.Type = T.self) -> T? {
         flatMap { (wrapped) -> T? in
             try? JSONDecoder().decode(T.self, from: wrapped)
         }

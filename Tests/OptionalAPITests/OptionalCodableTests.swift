@@ -39,12 +39,28 @@ final class OptionalCodableTests: XCTestCase {
         )
     }
     
+    func test_shouldDecode_withDefaultType() {
+        // Arrange
+        let sut: Data? = codableStructAsData
+        
+        // Act
+        let result: CodableStruct? = sut.decode()
+        
+        // Assert
+        XCTAssertNotNil(result)
+        
+        XCTAssertEqual(
+            result,
+            CodableStruct(number: 55, message: "data message")
+        )
+    }
+    
     func test_decode_shouldReturn_noneForInvalidData() {
         // Arrange
         let sut: Data? = Data()
         
         // Act
-        let result: CodableStruct? = sut.decode(CodableStruct.self)
+        let result: CodableStruct? = sut.decode()
         
         // Assert
         XCTAssertNil(result)
@@ -55,7 +71,7 @@ final class OptionalCodableTests: XCTestCase {
         let sut: Data? = .none
         
         // Act
-        let result: CodableStruct? = sut.decode(CodableStruct.self)
+        let result: CodableStruct? = sut.decode()
         
         // Assert
         XCTAssertNil(result)
