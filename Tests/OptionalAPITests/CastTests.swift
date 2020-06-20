@@ -32,6 +32,12 @@ class CastTests: XCTestCase {
         )
     }
     
+    func test_cast_shouldNot_requireTypeParameterWhenItCanBeInferred() {
+        let result: String? = anyString.cast()
+        
+        XCTAssertNotNil(result)
+    }
+    
     func test_cast_shouldReturn_NoneForFailedCast() {
         // Arrange && Act
         let result: Int? = anyString.cast(Int.self)

@@ -284,6 +284,18 @@ With `cast` you can streamline your code to this:
      })
 ```
 
+If the type can be inferred from the context then you do not have to type it in.
+
+```swift
+let anyString: Any? = ...
+
+let result: String? = anyString.cast()
+```
+
+As you can see compiler is able to inferred the correct type. But be aware that in more complex cases this can slow down your compilation. 
+
+> If you want to have faster compilation then always be explicit about your types. In all of your code not only using this package.
+
 # That's it
 
 Hope it will help you :)
