@@ -296,6 +296,10 @@ As you can see compiler is able to inferred the correct type. But be aware that 
 
 > If you want to have faster compilation then always be explicit about your types. In all of your code not only using this package.
 
+# `encode` & `decode`
+
+T.B.C.
+
 # That's it
 
 Hope it will help you :)
