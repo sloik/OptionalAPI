@@ -1,6 +1,6 @@
 import Foundation
 
-// Systems Under Test
+// MARK: - Systems Under Test
 let noneString     : String? = .none
 
 let emptySomeString: String? = ""
@@ -18,3 +18,10 @@ let anyNoneString: Any? = String?.none
 
 let anyInt: Any? = someInt
 let anyNoneInt: Any? = noneInt
+
+// MARK: - Codable
+
+struct CodableStruct: Codable {
+    let number: Int
+    let message: String
+}
