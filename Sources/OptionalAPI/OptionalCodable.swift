@@ -3,7 +3,6 @@ import Foundation
 // MARK: - Extension
 public extension Optional where Wrapped == Data {
     
-    
     /// Decodes wrapped data to desired Decodable type.
     /// - Parameter to: Type that is conforming to `Decodable`.
     /// - Returns: Instance of `T` if JSONDecoder decode succeeded or .none otherwise.
@@ -34,7 +33,6 @@ public extension Optional where Wrapped == Data {
 }
 
 public extension Optional where Wrapped: Encodable {
-    
     
     /// Encodes wrapped value to Data.
     /// - Returns: Data if JSONEncoder encode succeeded or .none otherwise.
