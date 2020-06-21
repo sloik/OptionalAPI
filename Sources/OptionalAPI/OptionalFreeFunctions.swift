@@ -93,3 +93,4 @@ public func recoverFromEmpty<T: Collection>(
 {
     optional.recoverFromEmpty(producer)
 }
+
