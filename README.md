@@ -298,7 +298,74 @@ As you can see compiler is able to inferred the correct type. But be aware that 
 
 # `encode` & `decode`
 
-T.B.C.
+One of the common places when you want to encode or decode something is when you have some data from the network. Flow might look something like this:
+
+* make a API call for a resource
+* get JSON data
+
+To keep is simple let's say our Data Transfer Model (DTO) looks like this:
+
+```swift
+struct CodableStruct: Codable, Equatable {
+    let number: Int
+    let message: String
+}
+```
+
+What happens is that a JSON string is send thru the network as data. To simulate this in code one could write this:
+
+```swift
+let codableStructAsData: Data? =
+    """
+    {
+        "number": 55,
+        "message": "data message"
+    }
+    """.data(using: .utf8)
+```
+
+Stage is set:
+
+## `decode`
+
+Networking code will hand us an instance of `Data?` that we want to decode. 
+
+```swift
+let result: CodableStruct? = codableStructAsData.decode()
+```
+
+It's that simple. Compiler can infer the type so there's no need to add it explicitly. Buy you can do it in some longer pipelines eg.:
+
+```swift
+codableStructAsData
+    .decode( CodableStruct.self )
+    .andThen({ instance in
+        // work with not optional instance
+    })
+```
+
+## `encode`
+
+Encode goes other way. You have a instance that you want to encode to send it as a json. 
+
+```swift
+let codableStruct: CodableStruct? = 
+    CodableStruct(
+        number: 69, 
+        message: "codable message"
+    )
+```
+
+To get the desired encoded vale just use the method:
+
+```swift
+codableStruct
+    .encode() // <- encoding part if you missed it ;)
+    .andThen({ instance in
+        // work with not optional instance
+    })
+```
+
 
 # That's it
 
