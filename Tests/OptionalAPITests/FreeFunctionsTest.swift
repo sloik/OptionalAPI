@@ -1,72 +1,73 @@
 import XCTest
 import OptionalAPI
+import Prelude
 
 class FreeFunctionsTests: XCTestCase {
 
     func test_isNone() throws {
         // Act & Assert
-        XCTAssertEqual(isNone(noneInt),
+        XCTAssertEqual(noneInt |> isNone,
                        noneInt == nil)
 
-        XCTAssertEqual(isNone(someInt),
+        XCTAssertEqual(someInt |> isNone,
                        someInt == nil)
 
-        XCTAssertEqual(isNone(noneString),
+        XCTAssertEqual(noneString |> isNone,
                        noneString == nil)
 
-        XCTAssertEqual(isNone(emptySomeString),
+        XCTAssertEqual(emptySomeString |> isNone,
                        emptySomeString == nil)
 
-        XCTAssertEqual(isNone(someSomeString),
+        XCTAssertEqual(someSomeString |> isNone,
                        someSomeString == nil)
 
-        XCTAssertEqual(isNone(noneIntArray),
+        XCTAssertEqual(noneIntArray |> isNone,
                        noneIntArray == nil)
 
-        XCTAssertEqual(isNone(emptyIntArray),
+        XCTAssertEqual(emptyIntArray |> isNone,
                        emptyIntArray == nil)
 
-        XCTAssertEqual(isNone(someIntArray),
+        XCTAssertEqual(someIntArray |> isNone,
                        someIntArray == nil)
     }
 
 
     func test_isSome() throws {
         // Act & Assert
-        XCTAssertEqual(isSome(noneInt),
+        XCTAssertEqual(noneInt |> isSome,
                        noneInt != nil)
 
-        XCTAssertEqual(isSome(someInt),
+        XCTAssertEqual(someInt |> isSome,
                        someInt != nil)
 
-        XCTAssertEqual(isSome(noneString),
+        XCTAssertEqual(noneString |> isSome,
                        noneString != nil)
 
-        XCTAssertEqual(isSome(emptySomeString),
+        XCTAssertEqual(emptySomeString |> isSome,
                        emptySomeString != nil)
 
-        XCTAssertEqual(isSome(someSomeString),
+        XCTAssertEqual(someSomeString |> isSome,
                        someSomeString != nil)
 
-        XCTAssertEqual(isSome(noneIntArray),
+        XCTAssertEqual(noneIntArray |> isSome,
                        noneIntArray != nil)
 
-        XCTAssertEqual(isSome(emptyIntArray),
+        XCTAssertEqual(emptyIntArray |> isSome,
                        emptyIntArray != nil)
 
-        XCTAssertEqual(isSome(someIntArray),
+        XCTAssertEqual(someIntArray |> isSome,
                        someIntArray != nil)
     }
 
 
     func test_isNotNone() throws {
         // Act & Assert
-        XCTAssertFalse(isNotNone(noneInt))
-        XCTAssertEqual(isNotNone(noneInt),
+        XCTAssertFalse(noneInt |> isNotNone)
+        XCTAssertEqual(noneInt |> isNotNone,
                        noneInt != nil)
 
-        XCTAssertTrue (isNotNone(someInt))
-        XCTAssertEqual(isNotNone(someInt),
+        XCTAssertTrue (someInt |> isNotNone)
+        XCTAssertEqual(someInt |> isNotNone,
                        someInt != nil)
     }
 
@@ -114,4 +115,400 @@ class FreeFunctionsTests: XCTestCase {
         waitForExpectations(timeout: 0.5)
     }
 
+
+    func test_andThen_should_callEachAndThenBlockForSomeCases() {
+        // Arrange
+        let didCallTransform = expectation(description: "transform was called")
+        didCallTransform.expectedFulfillmentCount = 3
+
+        // Act
+        _ = someInt
+            |> andThen({ (wrapped: Int) -> Int in
+                didCallTransform.fulfill()
+                return wrapped
+            })
+            |> andThen({ (wrapped: Int) -> Int in
+                didCallTransform.fulfill()
+                return wrapped
+            })
+            |> andThen({ (wrapped: Int) -> Int in
+                didCallTransform.fulfill()
+                return wrapped
+            })
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_andThen_should_passInTheWrappedValue() {
+        // Arrange
+        var accumulator: [Int] = []
+
+        // Act
+        andThen(
+            someInt,
+            { wrapped in accumulator.append(wrapped) }
+        )
+
+        // Assert
+        XCTAssertEqual(accumulator, [42])
+    }
+
+    func test_andThenCurried_should_passInTheWrappedValue() {
+        // Arrange
+        var accumulator: [Int] = []
+
+        // Act
+        someInt
+            |> andThen({ wrapped in accumulator.append(wrapped) })
+
+        // Assert
+        XCTAssertEqual(accumulator, [42])
+    }
+
+
+    func test_andThen_should_returnedTransformedValue() {
+        // Act & Assert
+        XCTAssertEqual(
+            someInt
+                |> andThen({ wrapped in wrapped + 1 }),
+            .some(42 + 1)
+        )
+    }
+
+    func test_andThen_shouldNot_operateOnNoneCase() {
+        // Arrange
+        let didCallTransform = expectation(description: "transform was called")
+        didCallTransform.isInverted = true
+
+        // Act
+        noneInt
+            |> andThen({ _ in didCallTransform.fulfill() })
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+
+    // MARK: - mapNone
+    func test_mapNone_should_operateOnNoneValue() {
+        // Arrange
+        let didCallTransform = expectation(description: "transform was called")
+
+        // Act
+        mapNone(
+            noneInt,
+            {
+                didCallTransform.fulfill()
+                return 24 }
+        )
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_mapNoneCurried_should_operateOnNoneValue() {
+        // Arrange
+        let didCallTransform = expectation(description: "transform was called")
+
+        // Act
+        noneInt
+            |> mapNone({
+                didCallTransform.fulfill()
+                return 24 })
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_mapNone_shouldNot_operateOnSomeValue() {
+        // Arrange
+        let didCallTransform = expectation(description: "transform was called")
+        didCallTransform.isInverted = true
+
+        // Act
+        someInt
+            |> mapNone({
+                didCallTransform.fulfill()
+                return 24})
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_mapNone_should_returnedSameSomeForSomeValue() {
+        // Act
+        let result = someInt
+            |> mapNone(24)
+
+        // Assert
+        XCTAssertEqual(someInt, result)
+    }
+
+    func test_default_should_returnDefaultValueForNoneCase() {
+        // Arrange
+        let defaultValue = 24
+
+        // Act
+        let result =
+            defaultSome(noneInt, defaultValue)
+
+        // Assert
+        XCTAssertNotNil(result)
+        XCTAssertEqual(defaultValue, result)
+    }
+
+    func test_defaultCurried_should_returnDefaultValueForNoneCase() {
+        // Arrange
+        let defaultValue = 24
+
+        // Act
+        let result =
+            noneInt |> defaultSome(defaultValue)
+
+        // Assert
+        XCTAssertNotNil(result)
+        XCTAssertEqual(defaultValue, result)
+    }
+
+
+    func test_default_should_returnedSameSomeForSomeValue() {
+        // Arrange
+        let defaultValue = 24
+
+        // Act
+        let result = someInt
+            |> defaultSome(defaultValue)
+
+        // Assert
+        XCTAssertNotNil(result)
+        XCTAssertEqual(someInt, result)
+    }
+
+    func test_or_typeShouldBe_wrapped() {
+        var intExpected: Int = someInt |> or(69)
+        intExpected = noneInt |> or(69)
+
+        // Redundant test but show how type system
+        // is checking that's correct.
+        XCTAssertTrue(
+            intExpected is Int
+        )
+    }
+
+    func test_or_forNone_shouldReturn_providedDefault() {
+        XCTAssertEqual(
+            noneInt |> or(69),
+            69
+        )
+
+        XCTAssertEqual(
+            noneString |> or("default string"),
+            "default string"
+        )
+    }
+
+    func test_or_forSome_shouldReturn_wrappedValue() {
+        XCTAssertEqual(
+            someInt |> or(69),
+            42
+        )
+
+        XCTAssertEqual(
+            someSomeString |> or("default string"),
+            "some string"
+        )
+    }
+
+    // MARK: - Collections Properties
+
+    func test_isNoneOrEmpty() {
+        XCTAssertEqual(
+            noneString |> isNoneOrEmpty,
+            noneString == nil || noneString!.isEmpty
+        )
+        XCTAssertTrue(noneString |> isNoneOrEmpty)
+
+        XCTAssertEqual(
+            emptySomeString |> isNoneOrEmpty,
+            emptySomeString == nil || emptySomeString!.isEmpty
+        )
+        XCTAssertTrue(emptySomeString |> isNoneOrEmpty)
+
+        XCTAssertEqual(
+            someSomeString |> isNoneOrEmpty,
+            someSomeString == nil || someSomeString!.isEmpty
+        )
+        XCTAssertFalse(someSomeString |> isNoneOrEmpty)
+
+        XCTAssertEqual(
+            noneIntArray |> isNoneOrEmpty,
+            noneIntArray == nil || noneIntArray!.isEmpty
+        )
+        XCTAssertTrue(noneIntArray |> isNoneOrEmpty)
+
+        XCTAssertEqual(
+            emptyIntArray |> isNoneOrEmpty,
+            emptyIntArray == nil || emptyIntArray!.isEmpty
+        )
+        XCTAssertTrue(emptyIntArray |> isNoneOrEmpty)
+
+        XCTAssertEqual(
+            someIntArray |> isNoneOrEmpty,
+            someIntArray == nil || someIntArray!.isEmpty
+        )
+        XCTAssertFalse(someIntArray |> isNoneOrEmpty)
+    }
+
+    func test_hasElements() {
+
+        XCTAssertEqual(
+            noneString |> hasElements,
+            noneString != nil && noneString!.isEmpty == false
+        )
+        XCTAssertFalse(noneString |> hasElements)
+
+        XCTAssertEqual(
+            emptySomeString |> hasElements,
+            emptySomeString != nil && emptySomeString!.isEmpty == false
+        )
+        XCTAssertFalse(emptySomeString |> hasElements)
+
+        XCTAssertEqual(
+            someSomeString |> hasElements,
+            someSomeString != nil && someSomeString!.isEmpty == false
+        )
+        XCTAssertTrue (someSomeString |> hasElements)
+
+        XCTAssertEqual(
+            noneIntArray |> hasElements,
+            noneIntArray != nil && noneIntArray!.isEmpty == false
+        )
+        XCTAssertFalse(noneIntArray |> hasElements)
+
+        XCTAssertEqual(
+            emptyIntArray |> hasElements,
+            emptyIntArray != nil && emptyIntArray!.isEmpty == false
+        )
+        XCTAssertFalse(emptyIntArray |> hasElements)
+
+
+        XCTAssertEqual(
+            someIntArray |> hasElements,
+            someIntArray != nil && someIntArray!.isEmpty == false
+        )
+        XCTAssertTrue (someIntArray |> hasElements)
+    }
+
+    func test_recoverFromEmpty_shouldNotBeCalledForNoneCase(){
+        // Arrange
+        let didCallTransform = expectation(description: "recover was called")
+        didCallTransform.isInverted = true
+
+        // Act
+        noneIntArray
+            |> recoverFromEmpty({ () -> [Int] in
+                didCallTransform.fulfill()
+                return [24]})
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_recoverFromEmpty_shouldNotBeCalledFor_Not_EmptyCollection(){
+        // Arrange
+        let didCallTransform = expectation(description: "recover was called")
+        didCallTransform.isInverted = true
+
+        // Act
+        let stringResult =
+            someSomeString
+                |> recoverFromEmpty({ () -> String in
+                    didCallTransform.fulfill()
+                    return "srting was empty"}())
+
+        XCTAssertEqual(stringResult, someSomeString)
+
+        let intArrayResult =
+            someIntArray
+                .recoverFromEmpty({
+                    didCallTransform.fulfill()
+                    return [5,10,15]}())
+
+        XCTAssertEqual(intArrayResult, someIntArray)
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_default_shouldNotBeCalledFor_NotEmptyCollectionsOrSomeValues(){
+        // Arrange
+        let didCallTransform = expectation(description: "recover was not called")
+        didCallTransform.isInverted = true
+
+        let stringDefault = "default string"
+        let intArrayDefault = [5,10,15]
+        let intDefault = 24
+
+        // Act
+        XCTAssertEqual(
+            someSomeString
+                |> defaultSome({ () -> String in
+                    didCallTransform.fulfill()
+                    return stringDefault}()),
+
+            someSomeString
+        )
+
+        XCTAssertEqual(
+            someIntArray
+                |> defaultSome({ () -> [Int] in
+                    didCallTransform.fulfill()
+                    return intArrayDefault}()),
+
+            someIntArray
+        )
+
+        XCTAssertEqual(
+            someInt
+                |> defaultSome({ () -> Int in
+                    didCallTransform.fulfill()
+                    return intDefault}),
+
+            someInt
+        )
+
+        // Assert
+        waitForExpectations(timeout: 0.5)
+    }
+
+    func test_randomChaining_stuff() {
+        XCTAssertEqual(
+            someInt
+                |> defaultSome(5)
+                |> andThen({ (i: Int) -> Int in i + 1 })
+                |> andThen({ (_) -> Int? in .none })
+                |> defaultSome(42),
+            42,
+            "Final result should equal to the last default value"
+        )
+
+        XCTAssertEqual(
+            noneInt
+                |> defaultSome(5)
+                |> andThen({ (i: Int) -> Int in i + 1 })
+                |> andThen({ (_) -> Int? in .none })
+                |> defaultSome(42),
+            42,
+            "Final result should equal to the last default value"
+        )
+
+        XCTAssertEqual(
+            noneInt
+                |> andThen({ $0 + 1 })
+                |> defaultSome(42),
+            42,
+            "Final result should equal to the last default value"
+        )
+    }
 }

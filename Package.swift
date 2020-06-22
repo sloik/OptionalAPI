@@ -21,6 +21,11 @@ let package = Package(
         .package(name: "SnapshotTesting",
                  url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
                  from: "1.7.2"),
+
+        .package(
+            name: "Prelude",
+            url: "https://github.com/pointfreeco/swift-prelude.git", .branch("master")
+        )
     ],
     targets: [
         .target(
@@ -32,6 +37,7 @@ let package = Package(
             dependencies: [
                 "OptionalAPI",
                 "SnapshotTesting",
+                "Prelude"
         ]),
     ]
 )

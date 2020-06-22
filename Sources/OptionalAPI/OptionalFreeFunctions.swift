@@ -36,7 +36,8 @@ public func andThen<T, Wrapped>(
     }
 }
 
-
+// MARK: - or
+@discardableResult
 public func or<T>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
@@ -45,6 +46,17 @@ public func or<T>(
     optional.or(producer)
 }
 
+@discardableResult
+public func or<T>(
+    _ producer: @autoclosure @escaping () -> T)
+    -> (T?) -> T
+{
+    return { optional in
+        optional.or(producer)
+    }
+}
+
+@discardableResult
 public func or<T>(
     _ optional: T?,
     _ producer: () -> T)
@@ -53,7 +65,19 @@ public func or<T>(
     optional.or(producer)
 }
 
+@discardableResult
+public func or<T>(
+    _ producer: @escaping () -> T)
+    -> (T?) -> T
+{
+    return { optional in
+        optional.or(producer)
+    }
+}
 
+
+// MARK: - mapNone
+@discardableResult
 public func mapNone<T>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
@@ -62,6 +86,7 @@ public func mapNone<T>(
     optional.or(producer)
 }
 
+@discardableResult
 public func mapNone<T>(
     _ optional: T?,
     _ producer: () -> T)
@@ -70,13 +95,43 @@ public func mapNone<T>(
     optional.or(producer)
 }
 
+@discardableResult
+public func mapNone<T>(
+    _ producer: @escaping () -> T)
+    -> (T?) -> T?
+{
+    return { optional in
+        optional.or(producer)
+    }
+}
 
+@discardableResult
+public func mapNone<T>(
+    _ producer: @escaping @autoclosure () -> T)
+    -> (T?) -> T?
+{
+    return { optional in
+        optional.or(producer)
+    }
+}
+
+
+// MARK: - Default Some
 public func defaultSome<T>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
     -> T?
 {
     optional.or(producer)
+}
+
+public func defaultSome<T>(
+    _ producer: @autoclosure @escaping () -> T)
+    -> (T?) -> T?
+{
+    return { optional in
+        optional.or(producer)
+    }
 }
 
 public func defaultSome<T>(
@@ -84,6 +139,15 @@ public func defaultSome<T>(
     _ producer: () -> T)
     -> T? {
         optional.or(producer)
+}
+
+public func defaultSome<T>(
+    _ producer: @escaping () -> T)
+    -> (T?) -> T?
+{
+    return { optional in
+        optional.or(producer)
+    }
 }
 
 // MARK: - Collections
@@ -96,6 +160,7 @@ public func isNoneOrEmpty<T: Collection>(_ optional: T?) -> Bool {
     optional.isNoneOrEmpty
 }
 
+@discardableResult
 public func recoverFromEmpty<T: Collection>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
@@ -104,11 +169,22 @@ public func recoverFromEmpty<T: Collection>(
     optional.recoverFromEmpty(producer)
 }
 
+@discardableResult
 public func recoverFromEmpty<T: Collection>(
-    _ optional: T?,
-    _ producer: () -> T)
-    -> T?
+    _ producer: @autoclosure @escaping () -> T)
+    -> (T?) -> T?
 {
-    optional.recoverFromEmpty(producer)
+    return { optional in
+        optional.recoverFromEmpty(producer)
+    }
 }
 
+@discardableResult
+public func recoverFromEmpty<T: Collection>(
+    _ producer: @escaping () -> T)
+    -> (T?) -> T?
+{
+    return { optional in
+        optional.recoverFromEmpty(producer)
+    }
+}
