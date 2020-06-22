@@ -26,6 +26,24 @@ public func andThen<T, Wrapped>(
     optional.andThen(transform)
 }
 
+public func andThen<T, Wrapped>(
+    _ transform: @escaping (Wrapped) -> T?)
+    -> (Wrapped?)
+    -> T?
+{
+    return { optional in
+        optional.andThen(transform)
+    }
+}
+
+
+public func or<T>(
+    _ optional: T?,
+    _ producer: @autoclosure () -> T)
+    -> T
+{
+    optional.or(producer)
+}
 
 public func or<T>(
     _ optional: T?,
