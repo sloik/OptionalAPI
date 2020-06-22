@@ -5,7 +5,7 @@ Some common idioms popup when working with Optionals in Swift. Here is a bunch o
 
 # Installation
 
-Just copy and paste contents of `OptionalAPI.swift` file 🍝 
+Just copy and paste files to your project 🍝 
 
 Or use SPM 😎
 
