@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "OptionalAPI",
     platforms: [
-        .macOS(.v10_13),
+        .macOS(.v10_10),
         .iOS(.v11),
         .tvOS(.v11),
         .watchOS(.v3)

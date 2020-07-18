@@ -18,7 +18,7 @@ class ZipTests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        record = false
+        SnapshotTesting.record = false
     }
     
     func test_zips() {
