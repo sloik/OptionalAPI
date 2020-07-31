@@ -1,7 +1,10 @@
 # OptionalAPI
 Optional extensions for Swift Optional Monad... use it or not... it's optional.
 
-Some common idioms popup when working with Optionals in Swift. Here is a bunch of useful extensions for some types.
+# Why
+Some common idioms popup when working with Optionals in Swift. Here is a bunch of useful extensions for some types. 
+
+Besides [if let is harmful](https://idoit.tech/en/2021/if-let-considered-harmful/) 🤓
 
 # Installation
 
@@ -46,7 +49,7 @@ if let trueInt = someIntOptional {
 }
 ```
 
-New:
+## `andThen`
 
 ```swift
 someOptional
@@ -105,6 +108,25 @@ someOptional
 ```
 
 I hope you can see that this gives you a very flexible API to handle Optionals in your code.
+
+## `andThenTry`
+
+This operator expects an transformation that may throw an error. When this happens it returns `.none` which alows to recover with other operators.
+
+```swift
+let jsonData: Data? = ...
+
+jsonData
+    .andThenTry{ data in 
+        try JSONDecoder().decode(CodableStruct.self, from: data) 
+    }
+    // this can also explode!
+    .andThenTry( functionTakingCodbaleStructAndThrowing ) 
+    // if any did thow an error then just recover with this one
+    .defaultSome( CodableStruct.validInstance ) 
+```
+
+You can _revocer_ differently after different tries. Or you can totaly ignore it. Either way you have a nice API.
 
 # But wait there's more!
 
@@ -235,34 +257,6 @@ noneEither.or(.right)
 
 Anything that you can call on this type (static methods) can be used here.
 
-# `zip`
-
-Zip function is defined on sequences in Swift. This is a nice extension to have it on Optional. 
-
-Let say you have some computations or values that are optional. It might be tedious to `if let` them. Using `zip` you just flip the container inside out (check out how type is transormed in this [documentation on zip in haskell](https://hoogle.haskell.org/?hoogle=zip)) and `map` on the result. 
-
-```swift
-let userName: String? 
-let userLast: String?
-let userAge: Int? 
-
-zip(userName, userLast, userAge)
-    .map{ (name: String, last: String, age: Int) in 
-        // Working with not optional values
-     }
-```
-
-And `map` can be _replaced_ with `andThen`:
-
-```swift
-zip(userName, userLast, userAge)
-    .andThen{ (name: String, last: String, age: Int) in 
-        // Working with not optional values
-     }
-```
-
-Under the hood `map` is used by it reads _better_.
-
 # `cast`
 
 Have you ever wrote code similar to this one:
@@ -366,6 +360,94 @@ codableStruct
     })
 ```
 
+# `whenSome` and `whenNone`
+
+When working with optionals it happens that **you want to run some code but not change the optional**. This is where `whenSome` and `whenNone` can be used.
+
+```swift
+let life: Int? = 42
+
+life
+    .whenSome { value in
+        print("Value of life is:", value)
+    }
+```
+
+This code prints to the console: _Value of life is: 42_.
+
+`whenSome` also comes in a favor that does not need the argument.
+
+```swift
+let life: Int? = 42
+
+life
+    .whenSome { 
+        print("Life is a mistery. But I know it's there!")
+    }
+```
+
+This is a very nice way of triggering some logic without having to write `if` statements. But what about when the optional is none (or how it's known nil)?
+
+`whenNone` is here for the rescue.
+
+```swift
+    let life: Int? = .none
+    
+    life
+        .whenNone { 
+            print("No life here!")
+        }
+```
+
+_No life here!_ will be printed in the console.
+
+But what's eaven more cool is that you can chain them!
+
+```swift
+let life: Int? = 42
+
+life
+    .whenSome { value in
+        print("Value of life is:", value)
+    }
+    .whenSome { 
+        print("Life is a mistery. But I know it's there!")
+    }
+    .whenNone { 
+        print("No life here!")
+    }
+```
+
+Depending on the operator and the value of optional different blocks will be called. And efcourse other operators can be thrown in to the mix.
+
+# Async/Await
+
+With new API for handeling asynchronous you can write code that uses asynchronous functions.
+
+```swift
+// we are in asynchronous context
+
+let someInt: Int? = 42
+
+let result: Int? = await someInt
+    .asyncFlatMap {
+        try! await Task.sleep(nanoseconds: 42)
+        return $0 + 1
+    }
+    .flatMap { fromAsync in
+        fromAsync * 10
+    }
+```
+
+As you can see it's easy to mix synchronous code with asynchronous. Just rember that `await` must be at the start of the pipeline. If you don't then you will have a friendly reminder from the compiler.
+
+# `zip` -- moved
+
+This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals. 
+
+# 🐇🕳 Rabbit Hole
+
+This project is part of the [🐇🕳 Rabbit Hole Packages Collection](https://github.com/sloik/RabbitHole)
 
 # That's it
 

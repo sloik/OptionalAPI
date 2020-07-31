@@ -459,34 +459,4 @@ final class OptionalAPITests: XCTestCase {
         // Assert
         waitForExpectations(timeout: 0.5)
     }
-    
-    func test_randomChaining_stuff() {
-        XCTAssertEqual(
-            someInt
-                .defaultSome(5)
-                .andThen({ $0 + 1 })
-                .andThen({ .none })
-                .defaultSome(42),
-            42,
-            "Final result should equal to the last default value"
-        )
-        
-        XCTAssertEqual(
-            noneInt
-                .defaultSome(5)
-                .andThen({ $0 + 1 })
-                .andThen({ .none })
-                .defaultSome(42),
-            42,
-            "Final result should equal to the last default value"
-        )
-        
-        XCTAssertEqual(
-            noneInt
-                .andThen({ $0 + 1 })
-                .defaultSome(42),
-            42,
-            "Final result should equal to the last default value"
-        )
-    }
 }
