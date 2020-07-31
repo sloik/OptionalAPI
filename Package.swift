@@ -24,7 +24,8 @@ let package = Package(
 
         .package(
             name: "Prelude",
-            url: "https://github.com/pointfreeco/swift-prelude.git", .branch("master")
+            url: "https://github.com/pointfreeco/swift-prelude.git",
+            .branch("main")
         )
     ],
     targets: [
