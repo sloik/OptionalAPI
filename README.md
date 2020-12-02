@@ -366,6 +366,65 @@ codableStruct
     })
 ```
 
+## `whenSome` and `whenNone`
+
+When working with optionals it happens that **you want to run some code but not change the optional**. This is where `whenSome` and `whenNone` can be used.
+
+```swift
+    let life: Int? = 42
+    
+    life
+        .whenSome { value in
+            print("Value of life is:", value)
+        }
+```
+
+This code prints to the console: _Value of life is: 42_.
+
+`whenSome` also comes in a favor that does not need the argument.
+
+```swift
+    let life: Int? = 42
+    
+    life
+        .whenSome { 
+            print("Life is a mistery. But I know it's there!")
+        }
+```
+
+This is a very nice way of triggering some logic without having to write `if` statements. But what about when the optional is none (or how it's known nil)?
+
+`whenNone` is here for the rescue.
+
+```swift
+    let life: Int? = .none
+    
+    life
+        .whenNone { 
+            print("No life here!")
+        }
+```
+
+_No life here!_ will be printed in the console.
+
+But what's eaven more cool is that you can chain them!
+
+```swift
+    let life: Int? = 42
+    
+    life
+        .whenSome { value in
+            print("Value of life is:", value)
+        }
+        .whenSome { 
+            print("Life is a mistery. But I know it's there!")
+        }
+        .whenNone { 
+            print("No life here!")
+        }
+```
+
+Depending on the operator and the value of optional different blocks will be called. And efcourse other operators can be thrown in to the mix.
 
 # That's it
 
