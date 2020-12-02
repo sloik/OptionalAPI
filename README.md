@@ -366,7 +366,7 @@ codableStruct
     })
 ```
 
-## `whenSome` and `whenNone`
+# `whenSome` and `whenNone`
 
 When working with optionals it happens that **you want to run some code but not change the optional**. This is where `whenSome` and `whenNone` can be used.
 
