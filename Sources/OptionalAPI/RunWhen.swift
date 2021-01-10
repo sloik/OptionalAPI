@@ -63,15 +63,3 @@ public extension Optional {
         return self
     }
 }
-
-func ke() {
-    let life: Int? = 42
-    
-    life
-        .whenSome { value in
-            print("Value of life is:", value)
-        }
-        .whenNone {
-            
-        }
-}
