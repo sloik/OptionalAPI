@@ -41,3 +41,17 @@ struct CodableStruct: Codable, Equatable {
     let number: Int
     let message: String
 }
+
+// MARK: - Throwing
+
+enum DummyError: Error {
+    case boom
+}
+
+func alwaysThrowing<T>(_ anything: T) throws -> String {
+    throw DummyError.boom
+}
+
+func alwaysReturningString<T>(_ anything: T) throws -> String {
+    "It works fine"
+}
