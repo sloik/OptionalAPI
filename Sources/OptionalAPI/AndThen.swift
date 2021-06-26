@@ -45,6 +45,21 @@ public extension Optional {
     @discardableResult
     func andThen<T>(_ transform: (Wrapped) -> T?) -> T? { flatMap(transform) }
     
+    
+    /// When optional is `some` then tries to run `transform` to produce value of type `T`.
+    /// However when this transform fails then this error is catch-ed and `.none` is returned
+    /// as a final result.
+    ///
+    ///  ````
+    ///  let jsonData: Data? = ...
+    ///
+    ///  jsonData
+    ///      .andThenTry{ data in try JSONDecoder().decode(CodableStruct.self, from: data) }
+    ///      .andThenTry( functionTakingCodbaleStructAndThrowing )
+    ///      .andThen{ ...
+    ///  ````
+    ///
+    ///  You can still use other operators to recover from failed _tried_ operators.
     @discardableResult
     func andThenTry<T>(_ transform: (Wrapped) throws -> T) -> T? {
         try? flatMap(transform)
