@@ -48,10 +48,12 @@ enum DummyError: Error {
     case boom
 }
 
+/// Always throws `DummyError.boom`.
 func alwaysThrowing<T>(_ anything: T) throws -> String {
     throw DummyError.boom
 }
 
+/// Always returns string `"It works fine"`.
 func alwaysReturningString<T>(_ anything: T) throws -> String {
     "It works fine"
 }
