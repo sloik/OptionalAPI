@@ -44,4 +44,9 @@ public extension Optional {
      ///  If the success path is all you need then `andThen` gets you covered.
     @discardableResult
     func andThen<T>(_ transform: (Wrapped) -> T?) -> T? { flatMap(transform) }
+    
+    @discardableResult
+    func andThenTry<T>(_ transform: (Wrapped) throws -> T) -> T? {
+        try? flatMap(transform)
+    }
 }
