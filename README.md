@@ -109,7 +109,7 @@ someOptional
 
 I hope you can see that this gives you a very flexible API to handle Optionals in your code.
 
-## `andthenTry`
+## `andThenTry`
 
 This operator expects an transformation that may throw an error. When this happens it returns `.none` which alows to recover with other operators.
 
