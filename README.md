@@ -49,7 +49,7 @@ if let trueInt = someIntOptional {
 }
 ```
 
-New:
+## `andThen`
 
 ```swift
 someOptional
@@ -108,6 +108,25 @@ someOptional
 ```
 
 I hope you can see that this gives you a very flexible API to handle Optionals in your code.
+
+## `andthenTry`
+
+This operator expects an transformation that may throw an error. When this happens it returns `.none` which alows to recover with other operators.
+
+```swift
+let jsonData: Data? = ...
+
+jsonData
+    .andThenTry{ data in 
+        try JSONDecoder().decode(CodableStruct.self, from: data) 
+    }
+    // this can also explode!
+    .andThenTry( functionTakingCodbaleStructAndThrowing ) 
+    // if any did thow an error then just recover with this one
+    .defaultSome( CodableStruct.validInstance ) 
+```
+
+You can _revocer_ differently after different tries. Or you can totaly ignore it. Either way you have a nice API.
 
 # But wait there's more!
 
