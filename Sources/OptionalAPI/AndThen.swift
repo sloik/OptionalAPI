@@ -64,4 +64,9 @@ public extension Optional {
     func andThenTry<T>(_ transform: (Wrapped) throws -> T) -> T? {
         try? flatMap(transform)
     }
+    
+    @discardableResult
+    func andThenTryOrThrow<T>(_ transform: (Wrapped) throws -> T) throws -> T? {
+        try flatMap(transform)
+    }
 }
