@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,39 +6,44 @@ import PackageDescription
 let package = Package(
     name: "OptionalAPI",
     platforms: [
-        .macOS(.v10_10),
-        .iOS(.v11),
+        .macOS(.v10_13),
+        .iOS(.v14),
         .tvOS(.v11),
-        .watchOS(.v3)
+        .watchOS(.v4)
     ],
     products: [
         .library(
             name: "OptionalAPI",
             type: .dynamic,
-            targets: ["OptionalAPI"]),
+            targets: ["OptionalAPI"]
+        ),
     ],
+
     dependencies: [
-        .package(name: "SnapshotTesting",
-                 url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
-                 from: "1.7.2"),
+        .package(
+          url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
+          from: "1.9.0"
+        ),
 
         .package(
-            name: "Prelude",
             url: "https://github.com/pointfreeco/swift-prelude.git",
-            .branch("main")
-        )
+            branch: "main"
+        ),
     ],
+
     targets: [
         .target(
             name: "OptionalAPI",
-            dependencies: []),
+            dependencies: []
+        ),
         
         .testTarget(
             name: "OptionalAPITests",
             dependencies: [
                 "OptionalAPI",
-                "SnapshotTesting",
-                "Prelude"
-        ]),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "Prelude", package: "swift-prelude"),
+            ]
+        ),
     ]
 )
