@@ -50,13 +50,28 @@ final class AsyncMapsTests: XCTestCase {
     }
 
     func test_asyncFlatMap_whenSome_whenTransformReturns_optionalValue_shouldReturnExpectedResult() async {
-        let none: String? = "42"
+        let some: String? = "42"
 
-        let result: Int? = await none.asyncFlatMap { (w: String) -> Int? in
+        let result: Int? = await some.asyncFlatMap { (w: String) -> Int? in
             try! await Task.sleep(nanoseconds: 42)
             return Int(w)
         }
 
         XCTAssertEqual(result, 42)
+    }
+
+    func test_asyncFlatMap_longerPipeline() async {
+        let some: Int? = 42
+
+        let result: Int? = await some
+            .asyncFlatMap {
+                try! await Task.sleep(nanoseconds: 42)
+                return $0 + 1
+            }
+            .flatMap { fromAsync in
+                fromAsync * 10
+            }
+
+        XCTAssertEqual(result, 430)
     }
 }

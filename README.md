@@ -393,12 +393,12 @@ codableStruct
 When working with optionals it happens that **you want to run some code but not change the optional**. This is where `whenSome` and `whenNone` can be used.
 
 ```swift
-    let life: Int? = 42
-    
-    life
-        .whenSome { value in
-            print("Value of life is:", value)
-        }
+let life: Int? = 42
+
+life
+    .whenSome { value in
+        print("Value of life is:", value)
+    }
 ```
 
 This code prints to the console: _Value of life is: 42_.
@@ -406,12 +406,12 @@ This code prints to the console: _Value of life is: 42_.
 `whenSome` also comes in a favor that does not need the argument.
 
 ```swift
-    let life: Int? = 42
-    
-    life
-        .whenSome { 
-            print("Life is a mistery. But I know it's there!")
-        }
+let life: Int? = 42
+
+life
+    .whenSome { 
+        print("Life is a mistery. But I know it's there!")
+    }
 ```
 
 This is a very nice way of triggering some logic without having to write `if` statements. But what about when the optional is none (or how it's known nil)?
@@ -432,21 +432,42 @@ _No life here!_ will be printed in the console.
 But what's eaven more cool is that you can chain them!
 
 ```swift
-    let life: Int? = 42
-    
-    life
-        .whenSome { value in
-            print("Value of life is:", value)
-        }
-        .whenSome { 
-            print("Life is a mistery. But I know it's there!")
-        }
-        .whenNone { 
-            print("No life here!")
-        }
+let life: Int? = 42
+
+life
+    .whenSome { value in
+        print("Value of life is:", value)
+    }
+    .whenSome { 
+        print("Life is a mistery. But I know it's there!")
+    }
+    .whenNone { 
+        print("No life here!")
+    }
 ```
 
 Depending on the operator and the value of optional different blocks will be called. And efcourse other operators can be thrown in to the mix.
+
+# Async/Await
+
+With new API for handeling asynchronous you can write code that uses asynchronous functions.
+
+```swift
+// we are in asynchronous context
+
+let someInt: Int? = 42
+
+let result: Int? = await someInt
+    .asyncFlatMap {
+        try! await Task.sleep(nanoseconds: 42)
+        return $0 + 1
+    }
+    .flatMap { fromAsync in
+        fromAsync * 10
+    }
+```
+
+As you can see it's easy to mix synchronous code with asynchronous. Just rember that `await` must be at the start of the pipeline. If you don't then you will have a friendly reminder from the compiler.
 
 # That's it
 
