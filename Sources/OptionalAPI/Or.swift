@@ -1,6 +1,8 @@
 
 import Foundation
 
+import AliasWonderland
+
 public extension Optional {
     /// - Parameters:
     /// - producer: Value ot type `Wrapped` to be used in case of `.none`.
@@ -57,11 +59,11 @@ public extension Optional {
     /// noneEither.or(.right)
     /// ````
     @discardableResult
-    func or(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped {
+    func or(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped {
         self.or(producer)
     }
     
-    func or(_ producer: ProducerOfWrapped) -> Wrapped {
+    func or(_ producer: Producer<Wrapped>) -> Wrapped {
         self ?? producer()
     }
 }

@@ -26,6 +26,11 @@ let package = Package(
         ),
 
         .package(
+          url: "https://github.com/sloik/AliasWonderland.git",
+          from: "0.0.1"
+        ),
+
+        .package(
             url: "https://github.com/pointfreeco/swift-prelude.git",
             branch: "main"
         ),
@@ -34,7 +39,9 @@ let package = Package(
     targets: [
         .target(
             name: "OptionalAPI",
-            dependencies: []
+            dependencies: [
+                "AliasWonderland",
+            ]
         ),
         
         .testTarget(

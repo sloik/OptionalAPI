@@ -1,6 +1,8 @@
 
 import Foundation
 
+import AliasWonderland
+
 public extension Optional {
      
      ///  `mapNone` is the same thing for `none` case like `andThen` for `some` case.
@@ -38,7 +40,7 @@ public extension Optional {
      ///
      ///  You can `mapNone` more than once and on any stage you want.
     @discardableResult
-    func mapNone(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped? {
+    func mapNone(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
     }
     
@@ -77,7 +79,7 @@ public extension Optional {
      ///
      ///  You can `defaultSome` more than once and on any stage you want.
     @discardableResult
-    func defaultSome(_ producer: @autoclosure ProducerOfWrapped) -> Wrapped? {
+    func defaultSome(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
     }
 }

@@ -257,34 +257,6 @@ noneEither.or(.right)
 
 Anything that you can call on this type (static methods) can be used here.
 
-# `zip`
-
-Zip function is defined on sequences in Swift. This is a nice extension to have it on Optional. 
-
-Let say you have some computations or values that are optional. It might be tedious to `if let` them. Using `zip` you just flip the container inside out (check out how type is transormed in this [documentation on zip in haskell](https://hoogle.haskell.org/?hoogle=zip)) and `map` on the result. 
-
-```swift
-let userName: String? 
-let userLast: String?
-let userAge: Int? 
-
-zip(userName, userLast, userAge)
-    .map{ (name: String, last: String, age: Int) in 
-        // Working with not optional values
-     }
-```
-
-And `map` can be _replaced_ with `andThen`:
-
-```swift
-zip(userName, userLast, userAge)
-    .andThen{ (name: String, last: String, age: Int) in 
-        // Working with not optional values
-     }
-```
-
-Under the hood `map` is used by it reads _better_.
-
 # `cast`
 
 Have you ever wrote code similar to this one:
@@ -468,6 +440,11 @@ let result: Int? = await someInt
 ```
 
 As you can see it's easy to mix synchronous code with asynchronous. Just rember that `await` must be at the start of the pipeline. If you don't then you will have a friendly reminder from the compiler.
+
+# `zip` -- moved
+
+This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals. 
+
 
 # That's it
 
