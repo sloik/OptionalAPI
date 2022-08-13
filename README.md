@@ -445,6 +445,9 @@ As you can see it's easy to mix synchronous code with asynchronous. Just rember 
 
 This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals. 
 
+# 🐇🕳 Rabbit Hole
+
+This project is part of the [🐇🕳 Rabbit Hole Packages Collection](https://github.com/sloik/RabbitHole)
 
 # That's it
 
