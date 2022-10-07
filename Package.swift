@@ -1,4 +1,4 @@
-// swift-tools-version:5.6
+// swift-tools-version:5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,10 +6,10 @@ import PackageDescription
 let package = Package(
     name: "OptionalAPI",
     platforms: [
-        .macOS(.v10_13),
-        .iOS(.v14),
-        .tvOS(.v11),
-        .watchOS(.v4)
+        .macOS(.v10_15),
+        .iOS(.v16),
+        .tvOS(.v16),
+        .watchOS(.v9)
     ],
     products: [
         .library(
@@ -22,12 +22,12 @@ let package = Package(
     dependencies: [
         .package(
           url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
-          from: "1.9.0"
+          from: "1.10.0"
         ),
 
         .package(
           url: "https://github.com/sloik/AliasWonderland.git",
-          from: "0.0.1"
+          from: "2.0.1"
         ),
 
         .package(
