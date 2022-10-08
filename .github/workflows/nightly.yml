@@ -1,8 +1,8 @@
-name: Merge or commit
+name: Nightly build and test
 
 on:
-  push:
-  pull_request:
+  schedule:
+    - cron: '42 0 * * *'
 
 jobs:
   build:
