@@ -1,4 +1,4 @@
-![Main](https://github.com/sloik/OptionalAPI/actions/workflows/swift.yml/badge.svg?branch=main)
+![Main](https://github.com/sloik/OptionalAPI/actions/workflows/swift.yml/badge.svg?branch=master)
 ![Nightly](https://github.com/sloik/OptionalAPI/actions/workflows/nightly.yml/badge.svg)
 
 # OptionalAPI
