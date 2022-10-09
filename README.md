@@ -1,3 +1,6 @@
+![Main](https://github.com/sloik/OptionalAPI/actions/workflows/swift.yml/badge.svg?branch=main)
+![Nightly](https://github.com/sloik/OptionalAPI/actions/workflows/nightly.yml/badge.svg)
+
 # OptionalAPI
 Optional extensions for Swift Optional Monad... use it or not... it's optional.
 
