@@ -1,6 +1,19 @@
 
 import Foundation
 
+
+/// Given a predicate returns a function that can be used for checking if given
+/// optional wrapped value passes this predicate.
+///
+/// - Parameter predicate: Predicate that is applied to wrapped value of optional.
+/// - Returns: Optional when wrapped value matches predicate or `.none`.
+@discardableResult
+public func filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W? {
+    return { (wrapped: W?) in
+        wrapped.filter( predicate )
+    }
+}
+
 public extension Optional {
     
     /// Operator used to filter out optionals that do not pass a predicate.
