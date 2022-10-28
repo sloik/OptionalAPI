@@ -423,6 +423,26 @@ life
 
 Depending on the operator and the value of optional different blocks will be called. And efcourse other operators can be thrown in to the mix.
 
+# filter
+
+Sometimes you need a value only when it passes some predicate.
+
+```
+let arrayWithTwoElements: [Int]? = [42, 69]
+
+arrayWithTwoElements
+    .filter { array in array.count > 1 }
+    .andThen { ... } // work with array
+```
+
+There is also a free version of this operator: 
+
+```
+filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W?
+```
+
+Use it to create a filter functions with a given predicate baked in.
+
 # Async/Await
 
 With new API for handeling asynchronous you can write code that uses asynchronous functions.
