@@ -1,6 +1,5 @@
 import XCTest
 import OptionalAPI
-import Prelude
 
 class FreeFunctionsTests: XCTestCase {
 

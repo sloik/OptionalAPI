@@ -57,3 +57,18 @@ func alwaysThrowing<T>(_ anything: T) throws -> String {
 func alwaysReturningString<T>(_ anything: T) throws -> String {
     "It works fine"
 }
+
+// MARK: - Application
+
+precedencegroup ForwardApplication {
+    associativity: left
+    higherThan: AssignmentPrecedence
+}
+
+infix operator |>: ForwardApplication
+
+/// Applys function `f` to value `x`.
+@discardableResult
+public func |> <A, B>(x: A, f: (A) -> B) -> B {
+    f(x)
+}

@@ -28,12 +28,7 @@ let package = Package(
         .package(
           url: "https://github.com/sloik/AliasWonderland.git",
           from: "2.0.1"
-        ),
-
-        .package(
-            url: "https://github.com/pointfreeco/swift-prelude.git",
-            branch: "main"
-        ),
+        )
     ],
 
     targets: [
@@ -49,7 +44,6 @@ let package = Package(
             dependencies: [
                 "OptionalAPI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                .product(name: "Prelude", package: "swift-prelude"),
             ]
         ),
     ]
