@@ -474,6 +474,4 @@ This project is part of the [🐇🕳 Rabbit Hole Packages Collection](https://g
 
 Hope it will help you :)
 
-If you want to find out more about me and some more Swift stuff then I invite you to my site: http://idoit.tech/en/
-
 Cheers! :D
