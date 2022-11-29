@@ -7,8 +7,6 @@ Optional extensions for Swift Optional Monad... use it or not... it's optional.
 # Why
 Some common idioms popup when working with Optionals in Swift. Here is a bunch of useful extensions for some types. 
 
-Besides [if let is harmful](https://idoit.tech/en/2021/if-let-considered-harmful/) 🤓
-
 # Installation
 
 Just copy and paste files to your project 🍝 
