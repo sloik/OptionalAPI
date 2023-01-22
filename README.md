@@ -1,3 +1,5 @@
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fsloik%2FOptionalAPI%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/sloik/OptionalAPI)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fsloik%2FOptionalAPI%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/sloik/OptionalAPI)
 ![Main](https://github.com/sloik/OptionalAPI/actions/workflows/swift.yml/badge.svg?branch=master)
 ![Nightly](https://github.com/sloik/OptionalAPI/actions/workflows/nightly.yml/badge.svg)
 
