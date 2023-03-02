@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -27,7 +27,7 @@ let package = Package(
 
         .package(
           url: "https://github.com/sloik/AliasWonderland.git",
-          from: "3.5.7"
+          from: "3.5.8"
         )
     ],
 
