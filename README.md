@@ -464,6 +464,42 @@ let result: Int? = await someInt
 
 As you can see it's easy to mix synchronous code with asynchronous. Just rember that `await` must be at the start of the pipeline. If you don't then you will have a friendly reminder from the compiler.
 
+# `tryAsyncMap` & `tryAsyncFlatMap`
+
+`tryAsyncMap` & `tryAsyncFlatMap` are methods that allow you to perform an asynchronous transformation on an optional value in Swift. They take a closure that performs an asynchronous operation on the optional value, and return an optional value of a different type.
+
+Usage
+
+Here's an example of how to use `tryAsyncMap`:
+
+```swift
+enum MyError: Error {
+    case invalidInput
+}
+
+func doAsyncTransformation(value: Int?) async throws -> String {
+    guard let value = value else {
+        throw MyError.invalidInput
+    }
+
+    await Task.sleep(1_000_000_000) // Simulate long-running task.
+
+    return "Transformed value: \(value)"
+}
+
+let optionalValue: Int? = 42
+
+do {
+    let transformedValue = try await optionalValue.tryAsyncMap { value in
+        try doAsyncTransformation(value: value)
+    }
+
+    print(transformedValue) // Prints "Transformed value: 42".
+} catch {
+    print(error)
+}
+```
+
 # `zip` -- moved
 
 This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals. 
