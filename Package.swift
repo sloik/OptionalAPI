@@ -24,12 +24,17 @@ let package = Package(
           url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
           from: "1.11.0"
         ),
+        .package(
+            url: "https://github.com/sloik/AliasWonderland.git",
+            from: "3.5.10" // use latest version instead
+        )
     ],
 
     targets: [
         .target(
             name: "OptionalAPI",
             dependencies: [
+                "AliasWonderland"
             ]
         ),
         
