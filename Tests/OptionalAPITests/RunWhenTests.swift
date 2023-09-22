@@ -47,4 +47,21 @@ class RunWhenTests: XCTestCase {
         // Assert
         waitForExpectations(timeout: 2)
     }
+
+    func test_tryWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() throws {
+        // Arrange
+        let sut: Int? = 42
+        
+        let shouldCallBlock = expectation(description: "Block should have been called!")
+        shouldCallBlock.assertForOverFulfill = true
+        
+        // Act
+        try sut.tryWhenSome { wrapped in
+            XCTAssertEqual(wrapped, 42, "Should not modify value!")
+            shouldCallBlock.fulfill()
+        }
+        
+        // Assert
+        waitForExpectations(timeout: 2)
+    }
 }

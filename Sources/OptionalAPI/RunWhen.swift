@@ -42,7 +42,14 @@ public extension Optional {
         _ = self.map(block)
         return self
     }
-    
+
+    /// Sometime you want to just run some code when optional has _any_ wrapped value. 
+    /// This function gives you a nice API to do that.
+    @discardableResult
+    func tryWhenSome(_ block: (Wrapped) throws -> Void) throws -> Wrapped? {
+        _ = try self.map(block)
+        return self
+    }
     
     /// Sometimes you want to run some logic if optional does not contain any wrapped value.
     ///
