@@ -26,7 +26,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/sloik/AliasWonderland.git",
-            from: "3.6.3" // use latest version instead
+            from: "4.0.0" // use latest version instead
         )
     ],
 
