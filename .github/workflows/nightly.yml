@@ -7,7 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: macos-13
 
     steps:
       - name: Checkout
@@ -15,6 +15,6 @@ jobs:
 
       - name: Build
         run: swift build -v
-
+        
       - name: Run tests
         run: swift test -v
