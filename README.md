@@ -19,7 +19,7 @@ Or use SPM 😎
 
 # Documentation
 
-GitHub Pages: [OptionalAPI](https://sloik.github.io/OptionalAPI/documentation/optionalapi/)
+GitHub Pages: [OptionalAPI](https://sloik.github.io/OptionalAPI/documentation/optionalapi/swift/optional)
 
 # Examples:
 
