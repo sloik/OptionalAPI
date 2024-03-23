@@ -29,7 +29,7 @@ public extension Optional {
      - Throws: An error of type `Error` if the transformation fails.
 
      - Example:
-        ```
+        ```swift
         enum MyError: Error {
             case invalidInput
         }

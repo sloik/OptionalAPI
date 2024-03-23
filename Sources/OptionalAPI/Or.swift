@@ -11,7 +11,7 @@ public extension Optional {
     /// a `default` value in case the Optional is `nil`. That way it will always return
     /// a **not optional** instance to work with.
     ///
-    /// ````
+    /// ```swift
     /// let missingAge: Int? = nil
     /// let underAge  : Int? = 17
     /// let overAge   : Int? = 42
@@ -27,7 +27,7 @@ public extension Optional {
     ///
     /// - Note: You can use `.init` and static method available on type to:
     ///
-    /// ````
+    /// ```swift
     /// let noneInt: Int? = nil
     /// noneInt.or( .init() ) // 0
     /// noneInt.or( .zero   ) // 0
@@ -62,7 +62,7 @@ public extension Optional {
     func or(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped {
         self.or(producer)
     }
-    
+
     func or(_ producer: Producer<Wrapped>) -> Wrapped {
         self ?? producer()
     }

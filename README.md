@@ -432,7 +432,7 @@ Depending on the operator and the value of optional different blocks will be cal
 
 Sometimes you need a value only when it passes some predicate.
 
-```
+```swift
 let arrayWithTwoElements: [Int]? = [42, 69]
 
 arrayWithTwoElements
@@ -442,7 +442,7 @@ arrayWithTwoElements
 
 There is also a free version of this operator:
 
-```
+```swift
 filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W?
 ```
 

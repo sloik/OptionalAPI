@@ -4,13 +4,13 @@ import Foundation
 import AliasWonderland
 
 public extension Optional {
-     
+
      ///  `mapNone` is the same thing for `none` case like `andThen` for `some` case.
      ///
      ///  This functions allows you to `recover` from a computation that returned nil. It
      ///  ignores the some case and run only for `none`.
      ///
-     ///  ````
+     ///  ```swift
      ///  let host: String? = "www.host.com"
      ///  let url: URL? =
      ///      host
@@ -25,7 +25,7 @@ public extension Optional {
      ///
      ///  If the failing function would produce a valid output then `mapNone` would not be called.
      ///
-     ///  ````
+     ///  ```swift
      ///  let host: String? = "www.host.com"
      ///  let url: URL? =
      ///      host
@@ -36,20 +36,20 @@ public extension Optional {
      ///         .andThen( URL.init )
      ///
      ///  url // www.host.com/page.html
-     ///  ````
+     ///  ```
      ///
      ///  You can `mapNone` more than once and on any stage you want.
     @discardableResult
     func mapNone(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
     }
-    
+
      ///  `defaultSome` is just a better name than `mapNone`. Both work exactly the same.
      ///
      ///  This functions allows you to `recover` from a computation that returned nil. It
      ///  ignores the some case and run only for `none`.
      ///
-     ///  ````
+     ///  ```swift
      ///  let host: String? = "www.host.com"
      ///  let url: URL? =
      ///      host
@@ -60,11 +60,11 @@ public extension Optional {
      ///         .andThen( URL.init )
      ///
      ///  url // www.host.com
-     ///  ````
+     ///  ```
      ///
      ///  If the failing function would produce a valid output then `mapNone` would not be called.
      ///
-     ///  ````
+     ///  ```swift
      ///  let host: String? = "www.host.com"
      ///  let url: URL? =
      ///      host
@@ -75,7 +75,7 @@ public extension Optional {
      ///         .andThen( URL.init )
      ///
      ///  url // www.host.com/page.html
-     ///  ````
+     ///  ```
      ///
      ///  You can `defaultSome` more than once and on any stage you want.
     @discardableResult

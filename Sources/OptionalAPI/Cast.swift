@@ -9,7 +9,7 @@ import Foundation
 ///
 /// This form allows for easer composition. You provide configuration up
 /// front and pass the instance later.
-/// ```
+/// ```swift
 /// let casterToCustomVC: (Any) -> CustomVC? = cast(CustomVC.self)
 ///
 /// // later in code..
@@ -39,14 +39,14 @@ public func cast<T>(_ thing: Any, to: T.Type = T.self) -> T? {
 // MARK: - Extension
 
 public extension Optional {
-    
+
     /// Cast.
     /// - Parameter type: Type to which to cast eg. `String.self`
     /// - Returns: Some optional when cast succeeds or `none` otherwise.
     ///
     /// This form allows for easer composition. You provide configuration up
     /// front and pass the instance later.
-    /// ```
+    /// ```swift
     /// let someViewController: UIViewController? = ...
     /// someViewController
     ///     .cast( CustomVC.self )

@@ -15,9 +15,9 @@ public func filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W? {
 }
 
 public extension Optional {
-    
+
     /// Operator used to filter out optionals that do not pass a predicate.
-    /// ```
+    /// ```swift
     /// let someNumber: Int? = ...
     ///
     /// someNumber
