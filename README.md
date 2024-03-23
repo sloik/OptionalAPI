@@ -4,17 +4,22 @@
 ![Nightly](https://github.com/sloik/OptionalAPI/actions/workflows/nightly.yml/badge.svg)
 
 # OptionalAPI
+
 Optional extensions for Swift Optional Monad... use it or not... it's optional.
 
 # Why
-Some common idioms popup when working with Optionals in Swift. Here is a bunch of useful extensions for some types. 
+
+Some common idioms pop-up when working with Optionals in Swift. Here is a bunch of useful extensions for some types.
 
 # Installation
 
-Just copy and paste files to your project 🍝 
+Just copy and paste files to your project 🍝
 
 Or use SPM 😎
 
+# Documentation
+
+GitHub Pages: [OptionalAPI](https://sloik.github.io/OptionalAPI/documentation/optionalapi/)
 
 # Examples:
 
@@ -73,7 +78,7 @@ func returningNone(_ i: Int) -> Int? { Bool.random() ? .none : i }
 someOptional
     .andThen(maybeIncrement)
     .andThen(returningNone)  // <-- returns nil
-    .andThen(maybeIncrement)  
+    .andThen(maybeIncrement)
 ```
 
 Final result is `nil`. And you can't use a `??`. Use `mapNone` it's like normal `map` on Optional but for the `nil` case.
@@ -83,9 +88,9 @@ func returningNone(_ i: Int) -> Int? { .none }
 
 someOptional
     .andThen(maybeIncrement)
-    .andThen(returningNone)  
+    .andThen(returningNone)
     .mapNone(42)
-    .andThen(maybeIncrement)  
+    .andThen(maybeIncrement)
 ```
 
 If `someOptional` started with `10` and we had luck (returningNone did not returned nil) then the final result is `12`. But if were not so lucky then the `mapNone` would take over and the final result would be `43`.
@@ -95,17 +100,17 @@ You can also use more than one `mapNone` to handle any failures along the way. O
 ```swift
 someOptional
     // if someOptional is nil then start computation with default value
-    .defaultSome(5)     
-    // increment whatever is there         
+    .defaultSome(5)
+    // increment whatever is there
     .andThen(maybeIncrement)
     // are you feeling lucky?
-    .andThen(returningNone)  
+    .andThen(returningNone)
     // cover your ass if you had bad luck
     .defaultSome(42)
     // do some work with what's there
-    .andThen(maybeIncrement) 
+    .andThen(maybeIncrement)
     // what... again
-    .andThen(returningNone)  
+    .andThen(returningNone)
     // saved
     .defaultSome(10)
 ```
@@ -120,13 +125,13 @@ This operator expects an transformation that may throw an error. When this happe
 let jsonData: Data? = ...
 
 jsonData
-    .andThenTry{ data in 
-        try JSONDecoder().decode(CodableStruct.self, from: data) 
+    .andThenTry{ data in
+        try JSONDecoder().decode(CodableStruct.self, from: data)
     }
     // this can also explode!
-    .andThenTry( functionTakingCodbaleStructAndThrowing ) 
+    .andThenTry( functionTakingCodbaleStructAndThrowing )
     // if any did thow an error then just recover with this one
-    .defaultSome( CodableStruct.validInstance ) 
+    .defaultSome( CodableStruct.validInstance )
 ```
 
 You can _revocer_ differently after different tries. Or you can totaly ignore it. Either way you have a nice API.
@@ -237,7 +242,7 @@ let defaults: UserDefaults? = nil
 defaults.or( .standard ) // custom or "standard"
 
 let view: UIView? = nil
-view.or( .init() ) 
+view.or( .init() )
 
 // or any other init ;)
 view.or( .init(frame: .zero) )
@@ -289,7 +294,7 @@ let anyString: Any? = ...
 let result: String? = anyString.cast()
 ```
 
-As you can see compiler is able to inferred the correct type. But be aware that in more complex cases this can slow down your compilation. 
+As you can see compiler is able to inferred the correct type. But be aware that in more complex cases this can slow down your compilation.
 
 > If you want to have faster compilation then always be explicit about your types. In all of your code not only using this package.
 
@@ -325,7 +330,7 @@ Stage is set:
 
 ## `decode`
 
-Networking code will hand us an instance of `Data?` that we want to decode. 
+Networking code will hand us an instance of `Data?` that we want to decode.
 
 ```swift
 let result: CodableStruct? = codableStructAsData.decode()
@@ -343,12 +348,12 @@ codableStructAsData
 
 ## `encode`
 
-Encode goes other way. You have a instance that you want to encode to send it as a json. 
+Encode goes other way. You have a instance that you want to encode to send it as a json.
 
 ```swift
-let codableStruct: CodableStruct? = 
+let codableStruct: CodableStruct? =
     CodableStruct(
-        number: 69, 
+        number: 69,
         message: "codable message"
     )
 ```
@@ -384,7 +389,7 @@ This code prints to the console: _Value of life is: 42_.
 let life: Int? = 42
 
 life
-    .whenSome { 
+    .whenSome {
         print("Life is a mistery. But I know it's there!")
     }
 ```
@@ -395,9 +400,9 @@ This is a very nice way of triggering some logic without having to write `if` st
 
 ```swift
     let life: Int? = .none
-    
+
     life
-        .whenNone { 
+        .whenNone {
             print("No life here!")
         }
 ```
@@ -413,10 +418,10 @@ life
     .whenSome { value in
         print("Value of life is:", value)
     }
-    .whenSome { 
+    .whenSome {
         print("Life is a mistery. But I know it's there!")
     }
-    .whenNone { 
+    .whenNone {
         print("No life here!")
     }
 ```
@@ -435,7 +440,7 @@ arrayWithTwoElements
     .andThen { ... } // work with array
 ```
 
-There is also a free version of this operator: 
+There is also a free version of this operator:
 
 ```
 filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W?
@@ -502,7 +507,7 @@ do {
 
 # `zip` -- moved
 
-This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals. 
+This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals.
 
 # 🐇🕳 Rabbit Hole
 
