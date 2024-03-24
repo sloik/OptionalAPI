@@ -35,6 +35,9 @@ let package = Package(
             name: "OptionalAPI",
             dependencies: [
                 "AliasWonderland"
+            ],
+            resources: [
+                .copy("PrivacyInfo.xcprivacy"),
             ]
         ),
         
