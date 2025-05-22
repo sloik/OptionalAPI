@@ -22,7 +22,7 @@ let package = Package(
     dependencies: [
         .package(
           url: "https://github.com/pointfreeco/swift-snapshot-testing.git",
-          from: "1.18.3"
+          from: "1.18.4"
         ),
         .package(
             url: "https://github.com/sloik/AliasWonderland.git",
