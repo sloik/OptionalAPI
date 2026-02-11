@@ -71,6 +71,7 @@ Package.resolved
 .swiftpm
 
 .build/
+worktrees/
 
 # CocoaPods
 #

@@ -12,7 +12,7 @@ This repo hosts OptionalAPI, a Swift package of ergonomic helpers for `Optional`
 
 ## Workflow & Branching
 
-1. Every agent works inside a dedicated git worktree checkout. Create one with `git worktree add ../worktrees/<branch-name>`.
+1. Every agent works inside a dedicated git worktree checkout. Create one with `git worktree add ./worktrees/<branch-name> -b <branch>` or, if the branch already exists, `git worktree add ./worktrees/<branch-name> <branch>`.
 2. Branch names MUST start with a ticket or bug prefix: `TICKET-123-description` or `BUG-XYZ-short`. Use hyphen-separated lowercase words after the ticket prefix to describe focus.
 3. Each agent touches only their branch; coordinate by sharing the ticket prefix so commit/PR metadata stays traceable.
 4. Before editing production files, add or update a unit test that fails for the current assumption. TDD is non-negotiable: add the failing test, verify it fails, then implement the fix.
@@ -105,4 +105,3 @@ This repo hosts OptionalAPI, a Swift package of ergonomic helpers for `Optional`
 4. Commit message follows short + why format.
 5. Branch pushed + PR opened with summary/testing sections.
 6. Specialized subagents noted their reviews and challenges in the PR.
-
