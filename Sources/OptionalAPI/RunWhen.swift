@@ -50,6 +50,30 @@ public extension Optional {
         _ = try self.map(block)
         return self
     }
+
+    /// Asynchronous throwing version of `tryWhenSome`.
+    ///
+    /// ````swift
+    /// let life: Int? = 42
+    /// try await life.tryAsyncWhenSome { value in
+    ///     await Task.yield()
+    ///     print(value)
+    /// }
+    /// ````
+    ///
+    /// - Parameter block: Async throwing side effect to trigger when optional `isSome`.
+    /// - Returns: Same optional without altering it.
+    /// - Throws: Rethrows errors from the block.
+    @discardableResult
+    func tryAsyncWhenSome(_ block: (Wrapped) async throws -> Void) async throws -> Wrapped? {
+        switch self {
+        case .some(let wrapped):
+            try await block(wrapped)
+            return self
+        case .none:
+            return self
+        }
+    }
     
     /// Sometimes you want to run some logic if optional does not contain any wrapped value.
     ///
