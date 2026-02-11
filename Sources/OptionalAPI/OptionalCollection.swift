@@ -88,6 +88,28 @@ public extension Optional where Wrapped: Collection {
         map { collection in collection.isEmpty ? producer() : collection }
     }
 
+    /// Asynchronous version of `recoverFromEmpty` for async producers.
+    ///
+    /// ```swift
+    /// let items: [Int]? = []
+    /// let result = await items.asyncRecoverFromEmpty {
+    ///     await Task.yield()
+    ///     return [42]
+    /// }
+    /// ```
+    ///
+    /// - Parameter producer: Async producer used when the collection is empty.
+    /// - Returns: Original collection when non-empty, produced value when empty, or `.none`.
+    @discardableResult
+    func asyncRecoverFromEmpty(_ producer: () async -> Wrapped) async -> Wrapped? {
+        switch self {
+        case .some(let collection):
+            return collection.isEmpty ? await producer() : collection
+        case .none:
+            return .none
+        }
+    }
+
     func recoverFromEmpty(_ producer: () -> Wrapped) -> Wrapped? {
         map { collection in collection.isEmpty ? producer() : collection }
     }
