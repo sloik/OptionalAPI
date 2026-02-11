@@ -63,6 +63,26 @@ public extension Optional {
         self.or(producer)
     }
 
+    /// Asynchronous variant of `or` for fallback values produced asynchronously.
+    ///
+    /// ```swift
+    /// let cached: Int? = nil
+    /// let value = await cached.asyncOr {
+    ///     await Task.yield()
+    ///     return 42
+    /// }
+    /// ```
+    ///
+    /// - Parameter producer: Async producer for the fallback value.
+    /// - Returns: Wrapped value if present, otherwise the produced fallback value.
+    @discardableResult
+    func asyncOr(_ producer: () async -> Wrapped) async -> Wrapped {
+        switch self {
+        case .some(let wrapped): return wrapped
+        case .none             : return await producer()
+        }
+    }
+
     func or(_ producer: Producer<Wrapped>) -> Wrapped {
         self ?? producer()
     }
