@@ -58,4 +58,37 @@ final class AndThenTests: XCTestCase {
 
         XCTAssertEqual(result, 42)
     }
+
+    func test_tryAsyncAndThenTry_whenNone_shouldNotCallTransform_andReturnNone() async throws {
+        let none: Int? = .none
+
+        let result: Int? = try await none.tryAsyncAndThenTry { _ in
+            XCTFail("Should not call this closure!")
+            return 42
+        }
+
+        XCTAssertNil(result)
+    }
+
+    func test_tryAsyncAndThenTry_whenSome_shouldCallTransform_andReturnExpectedValue() async throws {
+        let some: Int? = 41
+
+        let result: Int? = try await some.tryAsyncAndThenTry { wrapped in
+            try await Task.sleep(nanoseconds: 42)
+            return wrapped + 1
+        }
+
+        XCTAssertEqual(result, 42)
+    }
+
+    func test_tryAsyncAndThenTry_whenSome_whenTransformThrows_shouldReturnNone() async throws {
+        let some: Int? = 41
+
+        let result: Int? = try await some.tryAsyncAndThenTry { _ in
+            try await Task.sleep(nanoseconds: 42)
+            throw DummyError.boom
+        }
+
+        XCTAssertNil(result)
+    }
 }
