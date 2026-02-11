@@ -22,6 +22,24 @@ public extension Optional {
         if isSome { block() }
         return self
     }
+
+    /// Asynchronous version of `whenSome` for side effects.
+    ///
+    /// ````swift
+    /// let life: Int? = 42
+    /// await life.asyncWhenSome {
+    ///     await Task.yield()
+    ///     print("I run when some")
+    /// }
+    /// ````
+    ///
+    /// - Parameter block: Async side effect to trigger when optional `isSome`.
+    /// - Returns: Same optional without altering it.
+    @discardableResult
+    func asyncWhenSome(_ block: () async -> Void) async -> Wrapped? {
+        if isSome { await block() }
+        return self
+    }
     
     
     /// More explicit name for `run` function. Under the hood it just calls it.
