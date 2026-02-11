@@ -45,6 +45,26 @@ public extension Optional {
     @discardableResult
     func andThen<T>(_ transform: (Wrapped) -> T?) -> T? { flatMap(transform) }
 
+    /// Asynchronous version of `andThen`, useful for chaining async transforms.
+    ///
+    /// ```swift
+    /// let host: String? = "www.host.com"
+    /// let result = await host.asyncAndThen { value in
+    ///     await Task.yield()
+    ///     return value + "/page"
+    /// }
+    /// ```
+    ///
+    /// - Parameter transform: Async transform producing an optional value.
+    /// - Returns: Transformed optional when `.some`, otherwise `.none`.
+    @discardableResult
+    func asyncAndThen<T>(_ transform: (Wrapped) async -> T?) async -> T? {
+        switch self {
+        case .some(let wrapped): return await transform(wrapped)
+        case .none             : return .none
+        }
+    }
+
 
     /// When optional is `some` then tries to run `transform` to produce value of type `T`.
     /// However when this transform fails then this error is catch-ed and `.none` is returned
