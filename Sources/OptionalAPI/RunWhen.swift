@@ -43,6 +43,29 @@ public extension Optional {
         return self
     }
 
+    /// Asynchronous version of `whenSome` that passes the wrapped value.
+    ///
+    /// ````swift
+    /// let life: Int? = 42
+    /// await life.asyncWhenSome { value in
+    ///     await Task.yield()
+    ///     print(value)
+    /// }
+    /// ````
+    ///
+    /// - Parameter block: Async side effect to trigger when optional `isSome`.
+    /// - Returns: Same optional without altering it.
+    @discardableResult
+    func asyncWhenSome(_ block: (Wrapped) async -> Void) async -> Wrapped? {
+        switch self {
+        case .some(let wrapped):
+            await block(wrapped)
+            return self
+        case .none:
+            return self
+        }
+    }
+
     /// Sometime you want to just run some code when optional has _any_ wrapped value. 
     /// This function gives you a nice API to do that.
     @discardableResult
