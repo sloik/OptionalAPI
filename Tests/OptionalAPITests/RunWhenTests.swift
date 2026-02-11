@@ -48,6 +48,32 @@ class RunWhenTests: XCTestCase {
         waitForExpectations(timeout: 2)
     }
 
+    func test_asyncWhenNone_shouldCallBlock_onlyWhenIsNone() async {
+        let sut: Int? = .none
+
+        let shouldCallBlock = expectation(description: "Block should have been called!")
+        shouldCallBlock.assertForOverFulfill = true
+
+        await sut.asyncWhenNone {
+            shouldCallBlock.fulfill()
+        }
+
+        await fulfillment(of: [shouldCallBlock], timeout: 2)
+    }
+
+    func test_asyncWhenNone_shouldNotCallBlock_whenSome() async {
+        let sut: Int? = 42
+
+        let shouldNotCallBlock = expectation(description: "Block should not have been called!")
+        shouldNotCallBlock.isInverted = true
+
+        await sut.asyncWhenNone {
+            shouldNotCallBlock.fulfill()
+        }
+
+        await fulfillment(of: [shouldNotCallBlock], timeout: 0.5)
+    }
+
     func test_tryWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() throws {
         // Arrange
         let sut: Int? = 42

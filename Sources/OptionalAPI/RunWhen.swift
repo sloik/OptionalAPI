@@ -69,4 +69,22 @@ public extension Optional {
         if isNone { block() }
         return self
     }
+
+    /// Asynchronous version of `whenNone` for side effects.
+    ///
+    /// ````swift
+    /// let life: Int? = nil
+    /// await life.asyncWhenNone {
+    ///     await Task.yield()
+    ///     print("I run when none")
+    /// }
+    /// ````
+    ///
+    /// - Parameter block: Async side effect to trigger when optional `isNone`.
+    /// - Returns: Same optional without altering it.
+    @discardableResult
+    func asyncWhenNone(_ block: () async -> Void) async -> Wrapped? {
+        if isNone { await block() }
+        return self
+    }
 }
