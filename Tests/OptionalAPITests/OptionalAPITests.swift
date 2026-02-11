@@ -269,6 +269,24 @@ final class OptionalAPITests: XCTestCase {
             "some string"
         )
     }
+
+    func test_asyncFold_whenSome_shouldReturnTransformedValue() async {
+        let result = await someInt.asyncFold(0) { value in
+            try? await Task.sleep(nanoseconds: 42)
+            return value + 1
+        }
+
+        XCTAssertEqual(result, 43)
+    }
+
+    func test_asyncFold_whenNone_shouldReturnNoneCase() async {
+        let result = await noneInt.asyncFold(24) { value in
+            try? await Task.sleep(nanoseconds: 42)
+            return value + 1
+        }
+
+        XCTAssertEqual(result, 24)
+    }
     
     
     // MARK: - Collections Properties

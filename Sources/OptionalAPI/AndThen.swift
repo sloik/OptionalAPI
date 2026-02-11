@@ -45,6 +45,26 @@ public extension Optional {
     @discardableResult
     func andThen<T>(_ transform: (Wrapped) -> T?) -> T? { flatMap(transform) }
 
+    /// Asynchronous version of `andThen`, useful for chaining async transforms.
+    ///
+    /// ```swift
+    /// let host: String? = "www.host.com"
+    /// let result = await host.asyncAndThen { value in
+    ///     await Task.yield()
+    ///     return value + "/page"
+    /// }
+    /// ```
+    ///
+    /// - Parameter transform: Async transform producing an optional value.
+    /// - Returns: Transformed optional when `.some`, otherwise `.none`.
+    @discardableResult
+    func asyncAndThen<T>(_ transform: (Wrapped) async -> T?) async -> T? {
+        switch self {
+        case .some(let wrapped): return await transform(wrapped)
+        case .none             : return .none
+        }
+    }
+
 
     /// When optional is `some` then tries to run `transform` to produce value of type `T`.
     /// However when this transform fails then this error is catch-ed and `.none` is returned
@@ -65,8 +85,55 @@ public extension Optional {
         try? flatMap(transform)
     }
 
+    /// Asynchronous version of `andThenTry` that converts thrown errors into `.none`.
+    ///
+    /// ```swift
+    /// let data: Data? = ...
+    /// let model = try await data.tryAsyncAndThenTry { value in
+    ///     try await Task.sleep(nanoseconds: 42)
+    ///     return try JSONDecoder().decode(CodableStruct.self, from: value)
+    /// }
+    /// ```
+    ///
+    /// - Parameter transform: Async throwing transform producing a value.
+    /// - Returns: `.none` when the optional is `.none` or when the transform throws.
+    @discardableResult
+    func tryAsyncAndThenTry<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
+        switch self {
+        case .some(let wrapped):
+            do {
+                return try await transform(wrapped)
+            } catch {
+                return .none
+            }
+        case .none:
+            return .none
+        }
+    }
+
     @discardableResult
     func andThenTryOrThrow<T>(_ transform: (Wrapped) throws -> T) throws -> T? {
         try flatMap(transform)
+    }
+
+    /// Asynchronous version of `andThenTryOrThrow` that propagates transform errors.
+    ///
+    /// ```swift
+    /// let data: Data? = ...
+    /// let model = try await data.tryAsyncAndThenTryOrThrow { value in
+    ///     try await Task.sleep(nanoseconds: 42)
+    ///     return try JSONDecoder().decode(CodableStruct.self, from: value)
+    /// }
+    /// ```
+    ///
+    /// - Parameter transform: Async throwing transform producing a value.
+    /// - Returns: Transformed optional when `.some`, otherwise `.none`.
+    /// - Throws: Rethrows errors from the transform.
+    @discardableResult
+    func tryAsyncAndThenTryOrThrow<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
+        switch self {
+        case .some(let wrapped): return try await transform(wrapped)
+        case .none             : return .none
+        }
     }
 }

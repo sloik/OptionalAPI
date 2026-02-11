@@ -44,6 +44,26 @@ public extension Optional {
         or(producer)
     }
 
+    /// Asynchronous version of `mapNone` for producing fallback values.
+    ///
+    /// ```swift
+    /// let value: Int? = nil
+    /// let result = await value.asyncMapNone {
+    ///     await Task.yield()
+    ///     return 42
+    /// }
+    /// ```
+    ///
+    /// - Parameter producer: Async producer of the fallback value.
+    /// - Returns: Original value for `.some`, otherwise the produced fallback.
+    @discardableResult
+    func asyncMapNone(_ producer: () async -> Wrapped) async -> Wrapped? {
+        switch self {
+        case .some(let wrapped): return wrapped
+        case .none             : return await producer()
+        }
+    }
+
      ///  `defaultSome` is just a better name than `mapNone`. Both work exactly the same.
      ///
      ///  This functions allows you to `recover` from a computation that returned nil. It
@@ -81,5 +101,25 @@ public extension Optional {
     @discardableResult
     func defaultSome(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
+    }
+
+    /// Asynchronous version of `defaultSome` for producing fallback values.
+    ///
+    /// ```swift
+    /// let value: Int? = nil
+    /// let result = await value.asyncDefaultSome {
+    ///     await Task.yield()
+    ///     return 42
+    /// }
+    /// ```
+    ///
+    /// - Parameter producer: Async producer of the fallback value.
+    /// - Returns: Original value for `.some`, otherwise the produced fallback.
+    @discardableResult
+    func asyncDefaultSome(_ producer: () async -> Wrapped) async -> Wrapped? {
+        switch self {
+        case .some(let wrapped): return wrapped
+        case .none             : return await producer()
+        }
     }
 }

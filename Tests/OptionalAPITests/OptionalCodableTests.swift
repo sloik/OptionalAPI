@@ -91,12 +91,38 @@ final class OptionalCodableTests: XCTestCase {
 
         XCTAssertNil(result)
     }
+
+    func test_asyncDecode_shouldReturn_expectedValue() async {
+        let sut: Data? = codableStructAsData
+
+        let result: CodableStruct? = await sut.asyncDecode()
+
+        XCTAssertEqual(
+            result,
+            CodableStruct(number: 55, message: "data message")
+        )
+    }
+
+    func test_asyncDecode_shouldReturn_noneForNoneData() async {
+        let sut: Data? = .none
+
+        let result: CodableStruct? = await sut.asyncDecode()
+
+        XCTAssertNil(result)
+    }
     
     func test_freeFunctions_should_yieldSameResultsAsExtension() {
         // MARK: Encode
+        let extensionEncode = sut.encode().flatMap { data in
+            try? JSONDecoder().decode(CodableStruct.self, from: data)
+        }
+        let functionEncode = encode(sut).flatMap { data in
+            try? JSONDecoder().decode(CodableStruct.self, from: data)
+        }
+
         XCTAssertEqual(
-            sut.encode()!,
-            encode(sut)!
+            extensionEncode,
+            functionEncode
         )
         
         XCTAssertEqual(

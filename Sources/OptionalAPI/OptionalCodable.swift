@@ -31,6 +31,23 @@ public extension Optional where Wrapped == Data {
             try? JSONDecoder().decode(T.self, from: wrapped)
         }
     }
+
+    /// Asynchronous version of `decode`.
+    /// - Parameter to: Type that is conforming to `Decodable`.
+    /// - Returns: Instance of `T` if JSONDecoder decode succeeded or .none otherwise.
+    ///
+    /// ```swift
+    /// let codableStructAsData: Data? = ...
+    /// let result: CodableStruct? = await codableStructAsData.asyncDecode()
+    /// ```
+    func asyncDecode<T: Decodable>(_ to: T.Type = T.self) async -> T? {
+        switch self {
+        case .some(let wrapped):
+            return try? JSONDecoder().decode(T.self, from: wrapped)
+        case .none:
+            return .none
+        }
+    }
 }
 
 
