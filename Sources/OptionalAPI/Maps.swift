@@ -82,4 +82,24 @@ public extension Optional {
     func defaultSome(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
     }
+
+    /// Asynchronous version of `defaultSome` for producing fallback values.
+    ///
+    /// ```swift
+    /// let value: Int? = nil
+    /// let result = await value.asyncDefaultSome {
+    ///     await Task.yield()
+    ///     return 42
+    /// }
+    /// ```
+    ///
+    /// - Parameter producer: Async producer of the fallback value.
+    /// - Returns: Original value for `.some`, otherwise the produced fallback.
+    @discardableResult
+    func asyncDefaultSome(_ producer: () async -> Wrapped) async -> Wrapped? {
+        switch self {
+        case .some(let wrapped): return wrapped
+        case .none             : return await producer()
+        }
+    }
 }
