@@ -80,6 +80,18 @@ final class OptionalCodableTests: XCTestCase {
         XCTAssertNil(result)
     }
 
+    func test_asyncEncode_shouldReturnData() async {
+        let result = await sut.asyncEncode()
+
+        XCTAssertNotNil(result)
+    }
+
+    func test_asyncEncode_shouldReturnNoneForNoneCase() async {
+        let result = await noneCase.asyncEncode()
+
+        XCTAssertNil(result)
+    }
+
     func test_asyncDecode_shouldReturn_expectedValue() async {
         let sut: Data? = codableStructAsData
 

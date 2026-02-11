@@ -60,6 +60,22 @@ public extension Optional where Wrapped: Encodable {
             try? JSONEncoder().encode(wrapped)
         }
     }
+
+    /// Asynchronous version of `encode`.
+    /// - Returns: Data if JSONEncoder encode succeeded or .none otherwise.
+    ///
+    /// ```swift
+    /// let value: CodableStruct? = ...
+    /// let data = await value.asyncEncode()
+    /// ```
+    func asyncEncode() async -> Data? {
+        switch self {
+        case .some(let wrapped):
+            return try? JSONEncoder().encode(wrapped)
+        case .none:
+            return .none
+        }
+    }
 }
 
 // MARK: - Free Functions
