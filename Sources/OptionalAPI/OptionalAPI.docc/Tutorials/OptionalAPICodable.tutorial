@@ -4,25 +4,35 @@
     }
 
     @Section(title: "Decode optional data") {
-        @Code(name: "decode") {
-            ```swift
-            struct Payload: Codable, Equatable {
-                let value: Int
-                let label: String
-            }
+        @Steps {
+            @Step {
+                Decode optional data into a typed model.
+                @Code(file: "Decode.swift", name: "decode") {
+                    ```swift
+                    struct Payload: Codable, Equatable {
+                        let value: Int
+                        let label: String
+                    }
 
-            let data: Data? = """{"value":1,"label":"one"}""".data(using: .utf8)
-            let decoded: Payload? = data.decode()
-            ```
+                    let data: Data? = """{"value":1,"label":"one"}""".data(using: .utf8)
+                    let decoded: Payload? = data.decode()
+                    ```
+                }
+            }
         }
     }
 
     @Section(title: "Encode optional values") {
-        @Code(name: "encode") {
-            ```swift
-            let payload: Payload? = .init(value: 1, label: "one")
-            let data = payload.encode()
-            ```
+        @Steps {
+            @Step {
+                Encode optional values into `Data` for transport or storage.
+                @Code(file: "Encode.swift", name: "encode") {
+                    ```swift
+                    let payload: Payload? = .init(value: 1, label: "one")
+                    let data = payload.encode()
+                    ```
+                }
+            }
         }
     }
 }

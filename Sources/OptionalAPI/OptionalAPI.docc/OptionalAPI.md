@@ -15,6 +15,7 @@ let result = input
 
 ## Tutorials
 
+- <doc:Tutorials>
 - <doc:OptionalAPIEndToEnd>
 - <doc:OptionalAPIBasics>
 - <doc:OptionalAPIAsync>

@@ -4,84 +4,94 @@
     }
 
     @Section(title: "Why OptionalAPI") {
-        @Content {
-            Use OptionalAPI when you want to keep optional handling explicit and chainable. It shines when you have multiple optional operations and want to keep `.some`/`.none` behavior consistent without nested branching.
+        @Steps {
+            @Step {
+                Use OptionalAPI when you want to keep optional handling explicit and chainable. It shines when you have multiple optional operations and want to keep `.some`/`.none` behavior consistent without nested branching.
+            }
         }
     }
 
     @Section(title: "Model a realistic flow") {
-        @Content {
-            Imagine you receive optional input, validate it, enrich it asynchronously, and then encode it for storage.
-        }
+        @Steps {
+            @Step {
+                Imagine you receive optional input, validate it, enrich it asynchronously, and then encode it for storage.
 
-        @Code(name: "End-to-end pipeline") {
-            ```swift
-            struct Payload: Codable, Equatable {
-                let value: Int
-                let label: String
-            }
+                @Code(file: "EndToEnd.swift", name: "End-to-end pipeline") {
+                    ```swift
+                    struct Payload: Codable, Equatable {
+                        let value: Int
+                        let label: String
+                    }
 
-            func enrich(_ value: Int) async -> String {
-                await Task.yield()
-                return "value-\(value)"
-            }
+                    func enrich(_ value: Int) async -> String {
+                        await Task.yield()
+                        return "value-\(value)"
+                    }
 
-            let input: Int? = 41
+                    let input: Int? = 41
 
-            let payloadData = await input
-                .andThen { $0 + 1 }
-                .filter { $0 > 0 }
-                .asyncAndThen { value in
-                    let label = await enrich(value)
-                    return Payload(value: value, label: label)
+                    let payloadData = await input
+                        .andThen { $0 + 1 }
+                        .filter { $0 > 0 }
+                        .asyncAndThen { value in
+                            let label = await enrich(value)
+                            return Payload(value: value, label: label)
+                        }
+                        .encode()
+                    ```
                 }
-                .encode()
-            ```
+            }
         }
     }
 
     @Section(title: "Handle missing values") {
-        @Content {
-            When a step yields `.none`, recover in a predictable way with `mapNone` or `defaultSome`.
-        }
+        @Steps {
+            @Step {
+                When a step yields `.none`, recover in a predictable way with `mapNone` or `defaultSome`.
 
-        @Code(name: "Recovering from none") {
-            ```swift
-            let result = input
-                .andThen { $0 + 1 }
-                .mapNone(0)
-                .andThen { $0 * 2 }
-            ```
+                @Code(file: "RecoverNone.swift", name: "Recovering from none") {
+                    ```swift
+                    let result = input
+                        .andThen { $0 + 1 }
+                        .mapNone(0)
+                        .andThen { $0 * 2 }
+                    ```
+                }
+            }
         }
     }
 
     @Section(title: "Run side effects") {
-        @Content {
-            Use `whenSome` and `whenNone` to trigger side effects without changing the optional.
-        }
+        @Steps {
+            @Step {
+                Use `whenSome` and `whenNone` to trigger side effects without changing the optional.
 
-        @Code(name: "Side effects") {
-            ```swift
-            input
-                .whenSome { value in
-                    print("Got value: \(value)")
+                @Code(file: "SideEffects.swift", name: "Side effects") {
+                    ```swift
+                    input
+                        .whenSome { value in
+                            print("Got value: \(value)")
+                        }
+                        .whenNone {
+                            print("No value")
+                        }
+                    ```
                 }
-                .whenNone {
-                    print("No value")
-                }
-            ```
+            }
         }
     }
 
     @Section(title: "Decode on the way back") {
-        @Content {
-            OptionalAPI lets you decode optional data and keep chaining.
-        }
+        @Steps {
+            @Step {
+                OptionalAPI lets you decode optional data and keep chaining.
 
-        @Code(name: "Decoding") {
-            ```swift
-            let decoded: Payload? = payloadData.decode()
-            ```
+                @Code(file: "Decoding.swift", name: "Decoding") {
+                    ```swift
+                    let decoded: Payload? = payloadData.decode()
+                    ```
+                }
+            }
         }
     }
 }

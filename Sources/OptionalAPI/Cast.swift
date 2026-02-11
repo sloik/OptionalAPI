@@ -27,7 +27,7 @@ public func cast<T>(_ otherType: T.Type = T.self) -> (Any) -> T? {
 }
 
 
-/// Free function wrapping ```as``` keyword.
+/// Free function wrapping Swift's conditional cast operator.
 /// - Parameters:
 ///   - thing: Instance to be casted.
 ///   - to: Type to which to cast eg. `String.self`

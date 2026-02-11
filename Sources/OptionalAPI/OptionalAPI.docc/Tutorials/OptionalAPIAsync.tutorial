@@ -4,42 +4,60 @@
     }
 
     @Section(title: "Async transforms") {
-        @Code(name: "asyncAndThen") {
-            ```swift
-            let value: Int? = 41
+        @Steps {
+            @Step {
+                Use `asyncAndThen` to transform optionals asynchronously.
 
-            let result = await value
-                .asyncAndThen { wrapped in
-                    await Task.yield()
-                    return wrapped + 1
+                @Code(file: "AsyncAndThen.swift", name: "asyncAndThen") {
+                    ```swift
+                    let value: Int? = 41
+
+                    let result = await value
+                        .asyncAndThen { wrapped in
+                            await Task.yield()
+                            return wrapped + 1
+                        }
+                    ```
                 }
-            ```
+            }
         }
     }
 
     @Section(title: "Async filters") {
-        @Code(name: "asyncFilter") {
-            ```swift
-            let value: Int? = 42
+        @Steps {
+            @Step {
+                Use `asyncFilter` to keep async predicates in the chain.
 
-            let result = await value.asyncFilter { wrapped in
-                await Task.yield()
-                return wrapped > 40
+                @Code(file: "AsyncFilter.swift", name: "asyncFilter") {
+                    ```swift
+                    let value: Int? = 42
+
+                    let result = await value.asyncFilter { wrapped in
+                        await Task.yield()
+                        return wrapped > 40
+                    }
+                    ```
+                }
             }
-            ```
         }
     }
 
     @Section(title: "Throwing async helpers") {
-        @Code(name: "tryAsyncWhenSome") {
-            ```swift
-            let value: Int? = 42
+        @Steps {
+            @Step {
+                Use `tryAsyncWhenSome` for async side effects that can throw.
 
-            try await value.tryAsyncWhenSome { wrapped in
-                await Task.yield()
-                print(wrapped)
+                @Code(file: "TryAsyncWhenSome.swift", name: "tryAsyncWhenSome") {
+                    ```swift
+                    let value: Int? = 42
+
+                    try await value.tryAsyncWhenSome { wrapped in
+                        await Task.yield()
+                        print(wrapped)
+                    }
+                    ```
+                }
             }
-            ```
         }
     }
 }

@@ -4,30 +4,42 @@
     }
 
     @Section(title: "Check emptiness") {
-        @Code(name: "hasElements / isNoneOrEmpty") {
-            ```swift
-            let noneString: String? = nil
-            let emptyString: String? = ""
-            let someString: String? = "text"
+        @Steps {
+            @Step {
+                Use `hasElements` and `isNoneOrEmpty` to reduce optional collection branching.
 
-            noneString.hasElements      // false
-            emptyString.hasElements     // false
-            someString.hasElements      // true
+                @Code(file: "CollectionChecks.swift", name: "hasElements / isNoneOrEmpty") {
+                    ```swift
+                    let noneString: String? = nil
+                    let emptyString: String? = ""
+                    let someString: String? = "text"
 
-            noneString.isNoneOrEmpty    // true
-            emptyString.isNoneOrEmpty   // true
-            someString.isNoneOrEmpty    // false
-            ```
+                    noneString.hasElements      // false
+                    emptyString.hasElements     // false
+                    someString.hasElements      // true
+
+                    noneString.isNoneOrEmpty    // true
+                    emptyString.isNoneOrEmpty   // true
+                    someString.isNoneOrEmpty    // false
+                    ```
+                }
+            }
         }
     }
 
     @Section(title: "Recover empty collections") {
-        @Code(name: "recoverFromEmpty") {
-            ```swift
-            let emptyArray: [Int]? = []
+        @Steps {
+            @Step {
+                Recover empty collections while keeping `.none` untouched.
 
-            let result = emptyArray.recoverFromEmpty([1, 2, 3])
-            ```
+                @Code(file: "RecoverFromEmpty.swift", name: "recoverFromEmpty") {
+                    ```swift
+                    let emptyArray: [Int]? = []
+
+                    let result = emptyArray.recoverFromEmpty([1, 2, 3])
+                    ```
+                }
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ import Foundation
 
 public extension Optional {
 
-     /// More readable wrapper on ```flatMap``` function defined on Optional in the standard library.
+     /// More readable wrapper on `flatMap` function defined on Optional in the standard library.
      ///
      ///
      ///  It gives a readable way of chaining multiple operations. Also those that return an Optional.

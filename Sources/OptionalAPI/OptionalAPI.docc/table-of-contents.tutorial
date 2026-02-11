@@ -1,0 +1,18 @@
+@Tutorials(name: "Tutorials") {
+    @Intro(title: "OptionalAPI Tutorials") {
+        Start with the end-to-end walkthrough, then dive into focused guides.
+    }
+
+    @Chapter(name: "End-to-End") {
+        @Image(source: "ChapterHero.png", alt: "An end-to-end optional flow.")
+        @TutorialReference(tutorial: "doc:OptionalAPIEndToEnd")
+    }
+
+    @Chapter(name: "Focused Guides") {
+        @Image(source: "ChapterFocus.png", alt: "Focused optional helpers.")
+        @TutorialReference(tutorial: "doc:OptionalAPIBasics")
+        @TutorialReference(tutorial: "doc:OptionalAPIAsync")
+        @TutorialReference(tutorial: "doc:OptionalAPICollections")
+        @TutorialReference(tutorial: "doc:OptionalAPICodable")
+    }
+}

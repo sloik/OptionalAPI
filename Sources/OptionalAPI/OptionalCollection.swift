@@ -3,8 +3,8 @@ import Foundation
 
 public extension Optional where Wrapped: Collection {
 
-    /// **True** if optional instance is ````.some```` **and** collections
-    /// **HAS** elements ````isEmpty == false````
+    /// **True** if optional instance is `.some` **and** collections
+    /// **HAS** elements when `isEmpty` is false.
     ///
     /// When working with a Optional Collection the interesting _question_ is
     /// does it **hasElements**. Use this property to conveniently answer it.
@@ -36,7 +36,7 @@ public extension Optional where Wrapped: Collection {
     }
 
 
-    /// **True** if optional instance is ````.none```` **or** collections ````isEmpty````.
+    /// **True** if optional instance is none **or** collections are empty.
     ///
     /// Very often when working with a Optional Collection the absence of value and
     /// it being empty is handled in the same way.

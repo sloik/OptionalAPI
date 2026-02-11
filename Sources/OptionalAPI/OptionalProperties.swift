@@ -3,7 +3,7 @@ import Foundation
 
 public extension Optional {
 
-    /// **True** if optional instance is ````.none````.
+    /// **True** if optional instance is none.
     ///
     /// Replaces a check for nil:
     ///
@@ -25,7 +25,7 @@ public extension Optional {
     }
 
 
-    /// **True** if optional instance is ````.some(Wrapped)````.
+    /// **True** if optional instance is some.
     ///
     /// Replaces a check for nil:
     ///
@@ -42,7 +42,7 @@ public extension Optional {
     var isSome: Bool { isNone == false }
 
 
-    /// **True** if optional instance is ````.some(Wrapped)````.
+    /// **True** if optional instance is some.
     /// You can also read it as **isSome**.
     ///
     /// Replaces a check for nil:
@@ -60,7 +60,7 @@ public extension Optional {
     var isNotNone: Bool { isNone == false }
 
 
-    /// **True** if optional instance is ````.none````.
+    /// **True** if optional instance is none.
     /// You can also read it as **isNone**.
     ///
     /// Replaces a check for nil:

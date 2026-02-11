@@ -4,37 +4,55 @@
     }
 
     @Section(title: "Map some, recover none") {
-        @Code(name: "Basic chain") {
-            ```swift
-            let value: Int? = 10
+        @Steps {
+            @Step {
+                Build small, readable pipelines with `andThen` and `mapNone`.
 
-            let result = value
-                .andThen { $0 + 1 }
-                .mapNone(0)
-                .andThen { $0 * 2 }
-            ```
+                @Code(file: "BasicsChain.swift", name: "Basic chain") {
+                    ```swift
+                    let value: Int? = 10
+
+                    let result = value
+                        .andThen { $0 + 1 }
+                        .mapNone(0)
+                        .andThen { $0 * 2 }
+                    ```
+                }
+            }
         }
     }
 
     @Section(title: "Default values") {
-        @Code(name: "defaultSome") {
-            ```swift
-            let value: Int? = nil
+        @Steps {
+            @Step {
+                Use `defaultSome` when you want a fallback for `.none`.
 
-            let result = value
-                .defaultSome(5)
-                .andThen { $0 + 1 }
-            ```
+                @Code(file: "DefaultSome.swift", name: "defaultSome") {
+                    ```swift
+                    let value: Int? = nil
+
+                    let result = value
+                        .defaultSome(5)
+                        .andThen { $0 + 1 }
+                    ```
+                }
+            }
         }
     }
 
     @Section(title: "Side effects") {
-        @Code(name: "whenSome/whenNone") {
-            ```swift
-            value
-                .whenSome { print("has value") }
-                .whenNone { print("no value") }
-            ```
+        @Steps {
+            @Step {
+                Use `whenSome` and `whenNone` to run side effects without altering the optional.
+
+                @Code(file: "WhenSomeWhenNone.swift", name: "whenSome/whenNone") {
+                    ```swift
+                    value
+                        .whenSome { print("has value") }
+                        .whenNone { print("no value") }
+                    ```
+                }
+            }
         }
     }
 }
