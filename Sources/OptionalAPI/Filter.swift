@@ -33,4 +33,26 @@ public extension Optional {
         default   : return .none
         }
     }
+
+    /// Asynchronous version of `filter` for async predicates.
+    ///
+    /// ```swift
+    /// let value: Int? = 42
+    /// let result = await value.asyncFilter { wrapped in
+    ///     await Task.yield()
+    ///     return wrapped > 41
+    /// }
+    /// ```
+    ///
+    /// - Parameter predicate: Async predicate applied to the wrapped value.
+    /// - Returns: Optional if the predicate returns `true`, otherwise `.none`.
+    @discardableResult
+    func asyncFilter(_ predicate: (Wrapped) async -> Bool) async -> Wrapped? {
+        switch self {
+        case .some(let wrapped):
+            return await predicate(wrapped) ? self : .none
+        case .none:
+            return .none
+        }
+    }
 }
