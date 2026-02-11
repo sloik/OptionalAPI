@@ -69,4 +69,25 @@ public extension Optional {
     func andThenTryOrThrow<T>(_ transform: (Wrapped) throws -> T) throws -> T? {
         try flatMap(transform)
     }
+
+    /// Asynchronous version of `andThenTryOrThrow` that propagates transform errors.
+    ///
+    /// ```swift
+    /// let data: Data? = ...
+    /// let model = try await data.tryAsyncAndThenTryOrThrow { value in
+    ///     try await Task.sleep(nanoseconds: 42)
+    ///     return try JSONDecoder().decode(CodableStruct.self, from: value)
+    /// }
+    /// ```
+    ///
+    /// - Parameter transform: Async throwing transform producing a value.
+    /// - Returns: Transformed optional when `.some`, otherwise `.none`.
+    /// - Throws: Rethrows errors from the transform.
+    @discardableResult
+    func tryAsyncAndThenTryOrThrow<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
+        switch self {
+        case .some(let wrapped): return try await transform(wrapped)
+        case .none             : return .none
+        }
+    }
 }
