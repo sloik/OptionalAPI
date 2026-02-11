@@ -1,12 +1,12 @@
-@Tutorial(time: 12) {
+@Tutorial(time: 7) {
     @Intro(title: "OptionalAPI Async") {
-        Use async helpers to keep optional flows consistent in async contexts.
+        Use async helpers to keep optional networking flows consistent.
     }
 
     @Section(title: "Async transforms") {
         @Steps {
             @Step {
-                Use `asyncAndThen` to transform optionals asynchronously.
+                Fetch data only when you have a valid URL.
 
                 @Code(file: "AsyncAndThen.swift", name: "asyncAndThen") {
                     ```swift
@@ -26,7 +26,7 @@
     @Section(title: "Async filters") {
         @Steps {
             @Step {
-                Use `asyncFilter` to keep async predicates in the chain.
+                Reject empty tokens or expired data without breaking the chain.
 
                 @Code(file: "AsyncFilter.swift", name: "asyncFilter") {
                     ```swift
@@ -45,7 +45,7 @@
     @Section(title: "Throwing async helpers") {
         @Steps {
             @Step {
-                Use `tryAsyncWhenSome` for async side effects that can throw.
+                Record analytics or refresh tokens with async side effects that can throw.
 
                 @Code(file: "TryAsyncWhenSome.swift", name: "tryAsyncWhenSome") {
                     ```swift

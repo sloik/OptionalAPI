@@ -1,12 +1,12 @@
-@Tutorial(time: 10) {
+@Tutorial(time: 6) {
     @Intro(title: "OptionalAPI Basics") {
-        Learn the core OptionalAPI operators for chaining optional work.
+        Learn the core OptionalAPI operators by building a simple, safe networking pipeline.
     }
 
     @Section(title: "Map some, recover none") {
         @Steps {
             @Step {
-                Build small, readable pipelines with `andThen` and `mapNone`.
+                Build a safe URL from optional input without nested checks.
 
                 @Code(file: "BasicsChain.swift", name: "Basic chain") {
                     ```swift
@@ -25,7 +25,7 @@
     @Section(title: "Default values") {
         @Steps {
             @Step {
-                Use `defaultSome` when you want a fallback for `.none`.
+                Default to a known endpoint when the user input is missing.
 
                 @Code(file: "DefaultSome.swift", name: "defaultSome") {
                     ```swift
@@ -43,7 +43,7 @@
     @Section(title: "Side effects") {
         @Steps {
             @Step {
-                Use `whenSome` and `whenNone` to run side effects without altering the optional.
+                Log outcomes without changing the value.
 
                 @Code(file: "WhenSomeWhenNone.swift", name: "whenSome/whenNone") {
                     ```swift

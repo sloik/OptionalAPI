@@ -1,12 +1,12 @@
-@Tutorial(time: 10) {
+@Tutorial(time: 6) {
     @Intro(title: "OptionalAPI Collections") {
-        Learn helpers for optionals that wrap collections like strings and arrays.
+        Learn helpers for optional header and query collections.
     }
 
     @Section(title: "Check emptiness") {
         @Steps {
             @Step {
-                Use `hasElements` and `isNoneOrEmpty` to reduce optional collection branching.
+                Decide when to include optional headers without extra branching.
 
                 @Code(file: "CollectionChecks.swift", name: "hasElements / isNoneOrEmpty") {
                     ```swift
@@ -30,7 +30,7 @@
     @Section(title: "Recover empty collections") {
         @Steps {
             @Step {
-                Recover empty collections while keeping `.none` untouched.
+                Provide default headers only when the collection is empty.
 
                 @Code(file: "RecoverFromEmpty.swift", name: "recoverFromEmpty") {
                     ```swift

@@ -1,4 +1,4 @@
-@Tutorial(time: 20) {
+@Tutorial(time: 12) {
     @Intro(title: "OptionalAPI End-to-End") {
         Learn when to use OptionalAPI, how to chain common helpers, and how to mix async and Codable helpers in one flow.
     }
@@ -6,38 +6,40 @@
     @Section(title: "Why OptionalAPI") {
         @Steps {
             @Step {
-                Use OptionalAPI when you want to keep optional handling explicit and chainable. It shines when you have multiple optional operations and want to keep `.some`/`.none` behavior consistent without nested branching.
+                Use OptionalAPI when you want to keep optional handling explicit and chainable. It shines in networking flows where each step can return `nil`, and you want predictable `.some`/`.none` behavior without nested branching.
             }
         }
     }
 
-    @Section(title: "Model a realistic flow") {
+    @Section(title: "Model a cache-first fetch") {
         @Steps {
             @Step {
-                Imagine you receive optional input, validate it, enrich it asynchronously, and then encode it for storage.
+                Start with an optional base URL, fetch remote config if possible, and fall back to cached values when needed.
 
                 @Code(file: "EndToEnd.swift", name: "End-to-end pipeline") {
                     ```swift
-                    struct Payload: Codable, Equatable {
-                        let value: Int
-                        let label: String
+                    struct RemoteConfig: Codable, Equatable {
+                        let featureFlag: Bool
                     }
 
-                    func enrich(_ value: Int) async -> String {
+                    func fetchRemoteConfig(url: URL, token: String?) async -> Data? {
                         await Task.yield()
-                        return "value-\(value)"
+                        guard token != nil else { return nil }
+                        return "{\"featureFlag\":true}".data(using: .utf8)
                     }
 
-                    let input: Int? = 41
+                    let baseURL: String? = "https://api.example.com"
+                    let authToken: String? = "token"
+                    let cachedConfig: RemoteConfig? = nil
 
-                    let payloadData = await input
-                        .andThen { $0 + 1 }
-                        .filter { $0 > 0 }
-                        .asyncAndThen { value in
-                            let label = await enrich(value)
-                            return Payload(value: value, label: label)
+                    let config: RemoteConfig? = await baseURL
+                        .andThen { $0 + "/config" }
+                        .andThen { URL(string: $0) }
+                        .asyncAndThen { url in
+                            await fetchRemoteConfig(url: url, token: authToken)
                         }
-                        .encode()
+                        .decode()
+                        .defaultSome(cachedConfig)
                     ```
                 }
             }
@@ -47,14 +49,12 @@
     @Section(title: "Handle missing values") {
         @Steps {
             @Step {
-                When a step yields `.none`, recover in a predictable way with `mapNone` or `defaultSome`.
+                When a remote response is missing, fall back to cache or a safe default instead of branching manually.
 
                 @Code(file: "RecoverNone.swift", name: "Recovering from none") {
                     ```swift
-                    let result = input
-                        .andThen { $0 + 1 }
-                        .mapNone(0)
-                        .andThen { $0 * 2 }
+                    let resolved = remoteConfig
+                        .mapNone(cachedConfig ?? RemoteConfig(featureFlag: false))
                     ```
                 }
             }
@@ -64,17 +64,13 @@
     @Section(title: "Run side effects") {
         @Steps {
             @Step {
-                Use `whenSome` and `whenNone` to trigger side effects without changing the optional.
+                Log or record metrics without changing the value using `whenSome` and `whenNone`.
 
                 @Code(file: "SideEffects.swift", name: "Side effects") {
                     ```swift
-                    input
-                        .whenSome { value in
-                            print("Got value: \(value)")
-                        }
-                        .whenNone {
-                            print("No value")
-                        }
+                    config
+                        .whenSome { _ in print("Loaded remote config") }
+                        .whenNone { print("Fell back to defaults") }
                     ```
                 }
             }
@@ -84,13 +80,21 @@
     @Section(title: "Decode on the way back") {
         @Steps {
             @Step {
-                OptionalAPI lets you decode optional data and keep chaining.
+                Decode optional data into a typed model and keep chaining.
 
                 @Code(file: "Decoding.swift", name: "Decoding") {
                     ```swift
-                    let decoded: Payload? = payloadData.decode()
+                    let decoded: RemoteConfig? = payloadData.decode()
                     ```
                 }
+            }
+        }
+    }
+
+    @Section(title: "When to use this") {
+        @Steps {
+            @Step {
+                Use OptionalAPI for multi-step optional pipelines like request building, decoding, and fallback logic. Prefer `if let` when you only need a single check.
             }
         }
     }

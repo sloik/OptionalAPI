@@ -1,12 +1,12 @@
-@Tutorial(time: 12) {
+@Tutorial(time: 6) {
     @Intro(title: "OptionalAPI Codable") {
-        Use OptionalAPI to encode and decode optional Codable values.
+        Decode optional responses and persist cache-friendly models.
     }
 
     @Section(title: "Decode optional data") {
         @Steps {
             @Step {
-                Decode optional data into a typed model.
+                Decode optional response data into a typed config.
                 @Code(file: "Decode.swift", name: "decode") {
                     ```swift
                     struct Payload: Codable, Equatable {
@@ -25,7 +25,7 @@
     @Section(title: "Encode optional values") {
         @Steps {
             @Step {
-                Encode optional values into `Data` for transport or storage.
+                Encode configs for caching between launches.
                 @Code(file: "Encode.swift", name: "encode") {
                     ```swift
                     let payload: Payload? = .init(value: 1, label: "one")
