@@ -65,6 +65,32 @@ public extension Optional {
         try? flatMap(transform)
     }
 
+    /// Asynchronous version of `andThenTry` that converts thrown errors into `.none`.
+    ///
+    /// ```swift
+    /// let data: Data? = ...
+    /// let model = try await data.tryAsyncAndThenTry { value in
+    ///     try await Task.sleep(nanoseconds: 42)
+    ///     return try JSONDecoder().decode(CodableStruct.self, from: value)
+    /// }
+    /// ```
+    ///
+    /// - Parameter transform: Async throwing transform producing a value.
+    /// - Returns: `.none` when the optional is `.none` or when the transform throws.
+    @discardableResult
+    func tryAsyncAndThenTry<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
+        switch self {
+        case .some(let wrapped):
+            do {
+                return try await transform(wrapped)
+            } catch {
+                return .none
+            }
+        case .none:
+            return .none
+        }
+    }
+
     @discardableResult
     func andThenTryOrThrow<T>(_ transform: (Wrapped) throws -> T) throws -> T? {
         try flatMap(transform)
