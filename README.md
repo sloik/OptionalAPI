@@ -21,6 +21,14 @@ Or use SPM 😎
 
 GitHub Pages: [OptionalAPI](https://sloik.github.io/OptionalAPI/documentation/optionalapi/swift/optional)
 
+## Tutorials
+
+- End-to-end: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapiendtoend
+- Basics: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapibasics
+- Async: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapiasync
+- Collections: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapicollections
+- Codable: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapicodable
+
 # Examples:
 
 ## Running some code if none or some

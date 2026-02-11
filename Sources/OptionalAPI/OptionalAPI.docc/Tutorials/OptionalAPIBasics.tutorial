@@ -1,0 +1,40 @@
+@Tutorial(time: 10) {
+    @Intro(title: "OptionalAPI Basics") {
+        Learn the core OptionalAPI operators for chaining optional work.
+    }
+
+    @Section(title: "Map some, recover none") {
+        @Code(name: "Basic chain") {
+            ```swift
+            let value: Int? = 10
+
+            let result = value
+                .andThen { $0 + 1 }
+                .mapNone(0)
+                .andThen { $0 * 2 }
+            ```
+        }
+    }
+
+    @Section(title: "Default values") {
+        @Code(name: "defaultSome") {
+            ```swift
+            let value: Int? = nil
+
+            let result = value
+                .defaultSome(5)
+                .andThen { $0 + 1 }
+            ```
+        }
+    }
+
+    @Section(title: "Side effects") {
+        @Code(name: "whenSome/whenNone") {
+            ```swift
+            value
+                .whenSome { print("has value") }
+                .whenNone { print("no value") }
+            ```
+        }
+    }
+}

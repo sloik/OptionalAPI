@@ -1,0 +1,28 @@
+@Tutorial(time: 12) {
+    @Intro(title: "OptionalAPI Codable") {
+        Use OptionalAPI to encode and decode optional Codable values.
+    }
+
+    @Section(title: "Decode optional data") {
+        @Code(name: "decode") {
+            ```swift
+            struct Payload: Codable, Equatable {
+                let value: Int
+                let label: String
+            }
+
+            let data: Data? = """{"value":1,"label":"one"}""".data(using: .utf8)
+            let decoded: Payload? = data.decode()
+            ```
+        }
+    }
+
+    @Section(title: "Encode optional values") {
+        @Code(name: "encode") {
+            ```swift
+            let payload: Payload? = .init(value: 1, label: "one")
+            let data = payload.encode()
+            ```
+        }
+    }
+}

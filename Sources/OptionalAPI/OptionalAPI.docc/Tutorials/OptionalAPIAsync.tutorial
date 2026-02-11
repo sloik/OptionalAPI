@@ -1,0 +1,45 @@
+@Tutorial(time: 12) {
+    @Intro(title: "OptionalAPI Async") {
+        Use async helpers to keep optional flows consistent in async contexts.
+    }
+
+    @Section(title: "Async transforms") {
+        @Code(name: "asyncAndThen") {
+            ```swift
+            let value: Int? = 41
+
+            let result = await value
+                .asyncAndThen { wrapped in
+                    await Task.yield()
+                    return wrapped + 1
+                }
+            ```
+        }
+    }
+
+    @Section(title: "Async filters") {
+        @Code(name: "asyncFilter") {
+            ```swift
+            let value: Int? = 42
+
+            let result = await value.asyncFilter { wrapped in
+                await Task.yield()
+                return wrapped > 40
+            }
+            ```
+        }
+    }
+
+    @Section(title: "Throwing async helpers") {
+        @Code(name: "tryAsyncWhenSome") {
+            ```swift
+            let value: Int? = 42
+
+            try await value.tryAsyncWhenSome { wrapped in
+                await Task.yield()
+                print(wrapped)
+            }
+            ```
+        }
+    }
+}
