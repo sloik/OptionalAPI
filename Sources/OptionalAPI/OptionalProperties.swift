@@ -37,7 +37,12 @@ public extension Optional {
     /// ```swift
     /// number.isSome // true
     /// ````
-    @inlinable var isSome: Bool { isNone == false }
+    @inlinable var isSome: Bool {
+        switch self {
+        case .some: return true
+        case .none: return false
+        }
+    }
 
 
     /// **True** if optional instance is some.
@@ -55,7 +60,12 @@ public extension Optional {
     /// ```swift
     /// number.isNotNone // true
     /// ````
-    @inlinable var isNotNone: Bool { isNone == false }
+    @inlinable var isNotNone: Bool {
+        switch self {
+        case .some: return true
+        case .none: return false
+        }
+    }
 
 
     /// **True** if optional instance is none.
@@ -73,5 +83,10 @@ public extension Optional {
     /// ```swift
     /// number.isNotSome // true
     /// ````
-    @inlinable var isNotSome: Bool { isSome == false }
+    @inlinable var isNotSome: Bool {
+        switch self {
+        case .none: return true
+        case .some: return false
+        }
+    }
 }

@@ -39,7 +39,7 @@ public extension Optional {
      ///  You can `mapNone` more than once and on any stage you want.
     @inlinable @discardableResult
     func mapNone(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
-        or(producer)
+        self ?? producer()
     }
 
     /// Asynchronous version of `mapNone` for producing fallback values.
@@ -98,7 +98,7 @@ public extension Optional {
      ///  You can `defaultSome` more than once and on any stage you want.
     @inlinable @discardableResult
     func defaultSome(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
-        or(producer)
+        self ?? producer()
     }
 
     /// Asynchronous version of `defaultSome` for producing fallback values.
