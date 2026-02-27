@@ -1,6 +1,4 @@
 
-import Foundation
-
 public extension Optional where Wrapped: Collection {
 
     /// **True** if optional instance is `.some` **and** collections
@@ -29,7 +27,7 @@ public extension Optional where Wrapped: Collection {
     /// let someIntArray: [Int]? = [11, 22, 33]
     /// someIntArray.hasElements // true
     /// ````
-    var hasElements: Bool {
+    @inlinable var hasElements: Bool {
         map( \.isEmpty ) // get isEmpty value from the wrapped collection
             .map( ! )    // negation; if was empty then it `has NOT Elements`
             .or(false)   // was none so definitely does not have elements
@@ -61,7 +59,7 @@ public extension Optional where Wrapped: Collection {
     /// let someIntArray: [Int]? = [11, 22, 33]
     /// someIntArray.isNoneOrEmpty // false
     /// ````
-    var isNoneOrEmpty: Bool { map( \.isEmpty ) ?? true }
+    @inlinable var isNoneOrEmpty: Bool { map( \.isEmpty ) ?? true }
 
 
     ///  - Parameters:
@@ -83,7 +81,7 @@ public extension Optional where Wrapped: Collection {
     ///   someIntArray.recoverFromEmpty( [42] )  // [11, 22, 33] ; was `some` and collection has elements
     ///   someIntArray.defaultSome( [42] )       // [11, 22, 33] ; was `some` and collection has elements
     ///   ```
-    @discardableResult
+    @inlinable @discardableResult
     func recoverFromEmpty(_ producer: @autoclosure () -> Wrapped) -> Wrapped? {
         map { collection in collection.isEmpty ? producer() : collection }
     }
@@ -100,7 +98,7 @@ public extension Optional where Wrapped: Collection {
     ///
     /// - Parameter producer: Async producer used when the collection is empty.
     /// - Returns: Original collection when non-empty, produced value when empty, or `.none`.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncRecoverFromEmpty(_ producer: () async -> Wrapped) async -> Wrapped? {
         switch self {
         case .some(let collection):
@@ -110,7 +108,7 @@ public extension Optional where Wrapped: Collection {
         }
     }
 
-    func recoverFromEmpty(_ producer: () -> Wrapped) -> Wrapped? {
+    @inlinable func recoverFromEmpty(_ producer: () -> Wrapped) -> Wrapped? {
         map { collection in collection.isEmpty ? producer() : collection }
     }
 }

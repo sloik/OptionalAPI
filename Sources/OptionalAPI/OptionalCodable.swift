@@ -26,7 +26,7 @@ public extension Optional where Wrapped == Data {
     ///         // work with not optional instance
     ///     })
     /// ```
-    func decode<T: Decodable>(_ to: T.Type = T.self) -> T? {
+    @inlinable func decode<T: Decodable>(_ to: T.Type = T.self) -> T? {
         flatMap { (wrapped) -> T? in
             try? JSONDecoder().decode(T.self, from: wrapped)
         }
@@ -40,7 +40,7 @@ public extension Optional where Wrapped == Data {
     /// let codableStructAsData: Data? = ...
     /// let result: CodableStruct? = await codableStructAsData.asyncDecode()
     /// ```
-    func asyncDecode<T: Decodable>(_ to: T.Type = T.self) async -> T? {
+    @inlinable func asyncDecode<T: Decodable>(_ to: T.Type = T.self) async -> T? {
         switch self {
         case .some(let wrapped):
             return try? JSONDecoder().decode(T.self, from: wrapped)
@@ -55,7 +55,7 @@ public extension Optional where Wrapped: Encodable {
 
     /// Encodes wrapped value to Data.
     /// - Returns: Data if JSONEncoder encode succeeded or .none otherwise.
-    func encode() -> Data? {
+    @inlinable func encode() -> Data? {
         flatMap { (wrapped) -> Data? in
             try? JSONEncoder().encode(wrapped)
         }
@@ -68,7 +68,7 @@ public extension Optional where Wrapped: Encodable {
     /// let value: CodableStruct? = ...
     /// let data = await value.asyncEncode()
     /// ```
-    func asyncEncode() async -> Data? {
+    @inlinable func asyncEncode() async -> Data? {
         switch self {
         case .some(let wrapped):
             return try? JSONEncoder().encode(wrapped)
@@ -87,7 +87,7 @@ public extension Optional where Wrapped: Encodable {
 ///   - optional: Instance of `Data?` type.
 ///   - to: Type that is conforming to `Decodable`.
 /// - Returns: Instance of `T` if JSONDecoder decode succeeded or `.none` otherwise.
-public func decode<T: Decodable>(
+@inlinable public func decode<T: Decodable>(
     _ optional: Data?,
     _ to: T.Type = T.self)
     -> T?
@@ -99,7 +99,7 @@ public func decode<T: Decodable>(
 /// Curried version of `decode` function
 /// - Parameter to:  Type that is conforming to `Decodable`.
 /// - Returns: Function that given `Data?` will produce instance of `T` if JSONDecoder decode succeeded or `.none` otherwise.
-public func decode<T: Decodable>(
+@inlinable public func decode<T: Decodable>(
     _ to: T.Type = T.self)
     -> (Data?) -> T?
 {
@@ -114,6 +114,6 @@ public func decode<T: Decodable>(
 /// Encodes wrapped value to Data.
 /// - Parameter optional: Instance to be encoded.
 /// - Returns: Data if JSONEncoder encode succeeded or `.none` otherwise.
-public func encode<T: Encodable>(_ optional: T?) -> Data? {
+@inlinable public func encode<T: Encodable>(_ optional: T?) -> Data? {
     optional.encode()
 }

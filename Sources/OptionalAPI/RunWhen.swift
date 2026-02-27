@@ -1,6 +1,4 @@
 
-import Foundation
-
 public extension Optional {
     
     /// Sometime you want to just run some code when optional has _any_ wrapped value. This function gives you
@@ -17,7 +15,7 @@ public extension Optional {
     ///
     /// - Parameter block: Side effect that you want to trigger when optional has _any_ value of type `Wrapped`
     /// - Returns: Same optional without altering it.
-    @discardableResult
+    @inlinable @discardableResult
     func whenSome(_ block: () -> Void) -> Wrapped? {
         if isSome { block() }
         return self
@@ -35,7 +33,7 @@ public extension Optional {
     ///
     /// - Parameter block: Async side effect to trigger when optional `isSome`.
     /// - Returns: Same optional without altering it.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncWhenSome(_ block: () async -> Void) async -> Wrapped? {
         if isSome { await block() }
         return self
@@ -55,7 +53,7 @@ public extension Optional {
     ///
     /// - Parameter block: Function to be called for side effects when optional `isSome`.
     /// - Returns: Same optional without altering it.
-    @discardableResult
+    @inlinable @discardableResult
     func whenSome(_ block: (Wrapped) -> Void) -> Wrapped? {
         _ = self.map(block)
         return self
@@ -73,7 +71,7 @@ public extension Optional {
     ///
     /// - Parameter block: Async side effect to trigger when optional `isSome`.
     /// - Returns: Same optional without altering it.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncWhenSome(_ block: (Wrapped) async -> Void) async -> Wrapped? {
         switch self {
         case .some(let wrapped):
@@ -86,7 +84,7 @@ public extension Optional {
 
     /// Sometime you want to just run some code when optional has _any_ wrapped value. 
     /// This function gives you a nice API to do that.
-    @discardableResult
+    @inlinable @discardableResult
     func tryWhenSome(_ block: (Wrapped) throws -> Void) throws -> Wrapped? {
         _ = try self.map(block)
         return self
@@ -105,7 +103,7 @@ public extension Optional {
     /// - Parameter block: Async throwing side effect to trigger when optional `isSome`.
     /// - Returns: Same optional without altering it.
     /// - Throws: Rethrows errors from the block.
-    @discardableResult
+    @inlinable @discardableResult
     func tryAsyncWhenSome(_ block: (Wrapped) async throws -> Void) async throws -> Wrapped? {
         switch self {
         case .some(let wrapped):
@@ -129,7 +127,7 @@ public extension Optional {
     ///
     /// - Parameter block: Side effect that you want to trigger when optional `isNone`
     /// - Returns: Same optional without altering it.
-    @discardableResult
+    @inlinable @discardableResult
     func whenNone(_ block: () -> Void) -> Wrapped? {
         if isNone { block() }
         return self
@@ -147,7 +145,7 @@ public extension Optional {
     ///
     /// - Parameter block: Async side effect to trigger when optional `isNone`.
     /// - Returns: Same optional without altering it.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncWhenNone(_ block: () async -> Void) async -> Wrapped? {
         if isNone { await block() }
         return self

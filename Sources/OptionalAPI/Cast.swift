@@ -1,5 +1,3 @@
-import Foundation
-
 // MARK: - Free Function
 
 
@@ -20,7 +18,7 @@ import Foundation
 ///         // work with a non optional instance of CustomVC
 ///     })
 /// ```
-public func cast<T>(_ otherType: T.Type = T.self) -> (Any) -> T? {
+@inlinable public func cast<T>(_ otherType: T.Type = T.self) -> (Any) -> T? {
     return { thing in
         cast(thing, to: otherType)
     }
@@ -32,7 +30,7 @@ public func cast<T>(_ otherType: T.Type = T.self) -> (Any) -> T? {
 ///   - thing: Instance to be casted.
 ///   - to: Type to which to cast eg. `String.self`
 /// - Returns: Some optional when cast succeeds or `none` otherwise.
-public func cast<T>(_ thing: Any, to: T.Type = T.self) -> T? {
+@inlinable public func cast<T>(_ thing: Any, to: T.Type = T.self) -> T? {
     thing as? T
 }
 
@@ -54,7 +52,7 @@ public extension Optional {
     ///     // work with a non optional instance of CustomVC
     ///     })
     /// ```
-    func cast<T>(_ type: T.Type = T.self) -> T? {
+    @inlinable func cast<T>(_ type: T.Type = T.self) -> T? {
         flatMap(
             OptionalAPI.cast(type)
         )

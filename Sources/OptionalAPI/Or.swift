@@ -1,6 +1,4 @@
 
-import Foundation
-
 import AliasWonderland
 
 public extension Optional {
@@ -58,7 +56,7 @@ public extension Optional {
     /// let noneEither: Either? = nil
     /// noneEither.or(.right)
     /// ````
-    @discardableResult
+    @inlinable @discardableResult
     func or(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped {
         self.or(producer)
     }
@@ -75,7 +73,7 @@ public extension Optional {
     ///
     /// - Parameter producer: Async producer for the fallback value.
     /// - Returns: Wrapped value if present, otherwise the produced fallback value.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncOr(_ producer: () async -> Wrapped) async -> Wrapped {
         switch self {
         case .some(let wrapped): return wrapped
@@ -83,7 +81,7 @@ public extension Optional {
         }
     }
 
-    func or(_ producer: Producer<Wrapped>) -> Wrapped {
+    @inlinable func or(_ producer: Producer<Wrapped>) -> Wrapped {
         self ?? producer()
     }
 }

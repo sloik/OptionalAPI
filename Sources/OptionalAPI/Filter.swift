@@ -1,13 +1,11 @@
 
-import Foundation
-
 
 /// Given a predicate returns a function that can be used for checking if given
 /// optional wrapped value passes this predicate.
 ///
 /// - Parameter predicate: Predicate that is applied to wrapped value of optional.
 /// - Returns: Optional when wrapped value matches predicate or `.none`.
-@discardableResult
+@inlinable @discardableResult
 public func filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W? {
     return { (wrapped: W?) in
         wrapped.filter( predicate )
@@ -26,7 +24,7 @@ public extension Optional {
     /// ```
     /// - Parameter predicate: Predicate that should be applied to wrapped value.
     /// - Returns: Optional if it matches predicate or `.none`
-    @discardableResult
+    @inlinable @discardableResult
     func filter(_ predicate: (Wrapped) -> Bool) -> Wrapped? {
         switch map(predicate) {
         case true?: return self
@@ -46,7 +44,7 @@ public extension Optional {
     ///
     /// - Parameter predicate: Async predicate applied to the wrapped value.
     /// - Returns: Optional if the predicate returns `true`, otherwise `.none`.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncFilter(_ predicate: (Wrapped) async -> Bool) async -> Wrapped? {
         switch self {
         case .some(let wrapped):

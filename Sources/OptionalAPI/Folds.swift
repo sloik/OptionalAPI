@@ -1,9 +1,7 @@
 
-import Foundation
-
 public extension Optional {
 
-    func fold<R>(
+    @inlinable func fold<R>(
         _ noneCase: R,
         _ someCase: (Wrapped) -> R
     ) -> R {
@@ -24,7 +22,7 @@ public extension Optional {
     ///   - noneCase: Value returned when optional is `.none`.
     ///   - someCase: Async transform for the wrapped value.
     /// - Returns: Transformed value for `.some`, otherwise `noneCase`.
-    func asyncFold<R>(
+    @inlinable func asyncFold<R>(
         _ noneCase: R,
         _ someCase: (Wrapped) async -> R
     ) async -> R {

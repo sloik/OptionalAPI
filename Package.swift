@@ -14,7 +14,6 @@ let package = Package(
     products: [
         .library(
             name: "OptionalAPI",
-            type: .dynamic,
             targets: ["OptionalAPI"]
         ),
     ],

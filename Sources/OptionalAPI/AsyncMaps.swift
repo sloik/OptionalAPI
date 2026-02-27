@@ -1,9 +1,7 @@
 
-import Foundation
-
 public extension Optional {
 
-    @discardableResult
+    @inlinable @discardableResult
     func asyncMap<T>(_ transform: (Wrapped) async -> T) async -> T? {
         switch self {
         case .some(let wrapped): return await transform(wrapped)
@@ -57,7 +55,7 @@ public extension Optional {
         }
         ```
     */
-    @discardableResult
+    @inlinable @discardableResult
     func tryAsyncMap<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
         switch self {
         case .some(let wrapped): return try await transform(wrapped)
@@ -65,7 +63,7 @@ public extension Optional {
         }
     }
 
-    @discardableResult
+    @inlinable @discardableResult
     func asyncFlatMap<T>(_ transform: (Wrapped) async -> T?) async -> T? {
 
         switch self {
@@ -74,7 +72,7 @@ public extension Optional {
         }
     }
 
-    @discardableResult
+    @inlinable @discardableResult
     func tryAsyncFlatMap<T>(_ transform: (Wrapped) async throws -> T?) async throws -> T? {
 
         switch self {

@@ -1,6 +1,4 @@
 
-import Foundation
-
 import AliasWonderland
 
 public extension Optional {
@@ -39,7 +37,7 @@ public extension Optional {
      ///  ```
      ///
      ///  You can `mapNone` more than once and on any stage you want.
-    @discardableResult
+    @inlinable @discardableResult
     func mapNone(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
     }
@@ -56,7 +54,7 @@ public extension Optional {
     ///
     /// - Parameter producer: Async producer of the fallback value.
     /// - Returns: Original value for `.some`, otherwise the produced fallback.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncMapNone(_ producer: () async -> Wrapped) async -> Wrapped? {
         switch self {
         case .some(let wrapped): return wrapped
@@ -98,7 +96,7 @@ public extension Optional {
      ///  ```
      ///
      ///  You can `defaultSome` more than once and on any stage you want.
-    @discardableResult
+    @inlinable @discardableResult
     func defaultSome(_ producer: @autoclosure Producer<Wrapped>) -> Wrapped? {
         or(producer)
     }
@@ -115,7 +113,7 @@ public extension Optional {
     ///
     /// - Parameter producer: Async producer of the fallback value.
     /// - Returns: Original value for `.some`, otherwise the produced fallback.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncDefaultSome(_ producer: () async -> Wrapped) async -> Wrapped? {
         switch self {
         case .some(let wrapped): return wrapped

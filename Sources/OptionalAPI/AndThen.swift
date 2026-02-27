@@ -1,6 +1,4 @@
 
-import Foundation
-
 public extension Optional {
 
      /// More readable wrapper on `flatMap` function defined on Optional in the standard library.
@@ -42,7 +40,7 @@ public extension Optional {
      ///  url // nil
      ///  ```
      ///  If the success path is all you need then `andThen` gets you covered.
-    @discardableResult
+    @inlinable @discardableResult
     func andThen<T>(_ transform: (Wrapped) -> T?) -> T? { flatMap(transform) }
 
     /// Asynchronous version of `andThen`, useful for chaining async transforms.
@@ -57,7 +55,7 @@ public extension Optional {
     ///
     /// - Parameter transform: Async transform producing an optional value.
     /// - Returns: Transformed optional when `.some`, otherwise `.none`.
-    @discardableResult
+    @inlinable @discardableResult
     func asyncAndThen<T>(_ transform: (Wrapped) async -> T?) async -> T? {
         switch self {
         case .some(let wrapped): return await transform(wrapped)
@@ -80,7 +78,7 @@ public extension Optional {
     ///  ```
     ///
     ///  You can still use other operators to recover from failed _tried_ operators.
-    @discardableResult
+    @inlinable @discardableResult
     func andThenTry<T>(_ transform: (Wrapped) throws -> T) -> T? {
         try? flatMap(transform)
     }
@@ -97,7 +95,7 @@ public extension Optional {
     ///
     /// - Parameter transform: Async throwing transform producing a value.
     /// - Returns: `.none` when the optional is `.none` or when the transform throws.
-    @discardableResult
+    @inlinable @discardableResult
     func tryAsyncAndThenTry<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
         switch self {
         case .some(let wrapped):
@@ -111,7 +109,7 @@ public extension Optional {
         }
     }
 
-    @discardableResult
+    @inlinable @discardableResult
     func andThenTryOrThrow<T>(_ transform: (Wrapped) throws -> T) throws -> T? {
         try flatMap(transform)
     }
@@ -129,7 +127,7 @@ public extension Optional {
     /// - Parameter transform: Async throwing transform producing a value.
     /// - Returns: Transformed optional when `.some`, otherwise `.none`.
     /// - Throws: Rethrows errors from the transform.
-    @discardableResult
+    @inlinable @discardableResult
     func tryAsyncAndThenTryOrThrow<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
         switch self {
         case .some(let wrapped): return try await transform(wrapped)

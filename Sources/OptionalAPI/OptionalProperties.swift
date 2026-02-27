@@ -1,6 +1,4 @@
 
-import Foundation
-
 public extension Optional {
 
     /// **True** if optional instance is none.
@@ -17,7 +15,7 @@ public extension Optional {
     /// ```swift
     /// number.isNone // true
     /// ````
-    var isNone: Bool {
+    @inlinable var isNone: Bool {
         switch self {
         case .none: return true
         case .some: return false
@@ -39,7 +37,7 @@ public extension Optional {
     /// ```swift
     /// number.isSome // true
     /// ````
-    var isSome: Bool { isNone == false }
+    @inlinable var isSome: Bool { isNone == false }
 
 
     /// **True** if optional instance is some.
@@ -57,7 +55,7 @@ public extension Optional {
     /// ```swift
     /// number.isNotNone // true
     /// ````
-    var isNotNone: Bool { isNone == false }
+    @inlinable var isNotNone: Bool { isNone == false }
 
 
     /// **True** if optional instance is none.
@@ -75,5 +73,5 @@ public extension Optional {
     /// ```swift
     /// number.isNotSome // true
     /// ````
-    var isNotSome: Bool { isSome == false }
+    @inlinable var isNotSome: Bool { isSome == false }
 }

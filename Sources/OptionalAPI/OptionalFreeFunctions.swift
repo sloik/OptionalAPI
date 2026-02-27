@@ -1,24 +1,22 @@
 
-import Foundation
-
-public func isNone<T>(_ optional: T?) -> Bool {
+@inlinable public func isNone<T>(_ optional: T?) -> Bool {
     optional.isNone
 }
 
-public func isSome<T>(_ optional: T?) -> Bool {
+@inlinable public func isSome<T>(_ optional: T?) -> Bool {
     optional.isSome
 }
 
-public func isNotNone<T>(_ optional: T?) -> Bool {
+@inlinable public func isNotNone<T>(_ optional: T?) -> Bool {
     optional.isNotNone
 }
 
-public func isNotSome<T>(_ optional: T?) -> Bool {
+@inlinable public func isNotSome<T>(_ optional: T?) -> Bool {
     optional.isNotSome
 }
 
 
-public func andThen<T, Wrapped>(
+@inlinable public func andThen<T, Wrapped>(
     _ optional: Wrapped?,
     _ transform: (Wrapped) -> T?)
     -> T?
@@ -26,7 +24,7 @@ public func andThen<T, Wrapped>(
     optional.andThen(transform)
 }
 
-public func andThen<T, Wrapped>(
+@inlinable public func andThen<T, Wrapped>(
     _ transform: @escaping (Wrapped) -> T?)
     -> (Wrapped?)
     -> T?
@@ -37,7 +35,7 @@ public func andThen<T, Wrapped>(
 }
 
 // MARK: - or
-@discardableResult
+@inlinable @discardableResult
 public func or<T>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
@@ -46,7 +44,7 @@ public func or<T>(
     optional.or(producer)
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func or<T>(
     _ producer: @autoclosure @escaping () -> T)
     -> (T?) -> T
@@ -56,7 +54,7 @@ public func or<T>(
     }
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func or<T>(
     _ optional: T?,
     _ producer: () -> T)
@@ -65,7 +63,7 @@ public func or<T>(
     optional.or(producer)
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func or<T>(
     _ producer: @escaping () -> T)
     -> (T?) -> T
@@ -77,7 +75,7 @@ public func or<T>(
 
 
 // MARK: - mapNone
-@discardableResult
+@inlinable @discardableResult
 public func mapNone<T>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
@@ -86,7 +84,7 @@ public func mapNone<T>(
     optional.or(producer)
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func mapNone<T>(
     _ optional: T?,
     _ producer: () -> T)
@@ -95,7 +93,7 @@ public func mapNone<T>(
     optional.or(producer)
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func mapNone<T>(
     _ producer: @escaping () -> T)
     -> (T?) -> T?
@@ -105,7 +103,7 @@ public func mapNone<T>(
     }
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func mapNone<T>(
     _ producer: @escaping @autoclosure () -> T)
     -> (T?) -> T?
@@ -117,7 +115,7 @@ public func mapNone<T>(
 
 
 // MARK: - Default Some
-public func defaultSome<T>(
+@inlinable public func defaultSome<T>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
     -> T?
@@ -125,7 +123,7 @@ public func defaultSome<T>(
     optional.or(producer)
 }
 
-public func defaultSome<T>(
+@inlinable public func defaultSome<T>(
     _ producer: @autoclosure @escaping () -> T)
     -> (T?) -> T?
 {
@@ -134,14 +132,14 @@ public func defaultSome<T>(
     }
 }
 
-public func defaultSome<T>(
+@inlinable public func defaultSome<T>(
     _ optional: T?,
     _ producer: () -> T)
     -> T? {
         optional.or(producer)
 }
 
-public func defaultSome<T>(
+@inlinable public func defaultSome<T>(
     _ producer: @escaping () -> T)
     -> (T?) -> T?
 {
@@ -152,15 +150,15 @@ public func defaultSome<T>(
 
 // MARK: - Collections
 
-public func hasElements<T: Collection>(_ optional: T?) -> Bool {
+@inlinable public func hasElements<T: Collection>(_ optional: T?) -> Bool {
     optional.hasElements
 }
 
-public func isNoneOrEmpty<T: Collection>(_ optional: T?) -> Bool {
+@inlinable public func isNoneOrEmpty<T: Collection>(_ optional: T?) -> Bool {
     optional.isNoneOrEmpty
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func recoverFromEmpty<T: Collection>(
     _ optional: T?,
     _ producer: @autoclosure () -> T)
@@ -169,7 +167,7 @@ public func recoverFromEmpty<T: Collection>(
     optional.recoverFromEmpty(producer)
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func recoverFromEmpty<T: Collection>(
     _ producer: @autoclosure @escaping () -> T)
     -> (T?) -> T?
@@ -179,7 +177,7 @@ public func recoverFromEmpty<T: Collection>(
     }
 }
 
-@discardableResult
+@inlinable @discardableResult
 public func recoverFromEmpty<T: Collection>(
     _ producer: @escaping () -> T)
     -> (T?) -> T?
