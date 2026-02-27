@@ -29,10 +29,11 @@ public extension Optional where Wrapped: Collection {
     /// let someIntArray: [Int]? = [11, 22, 33]
     /// someIntArray.hasElements // true
     /// ````
-    var hasElements: Bool {
-        map( \.isEmpty ) // get isEmpty value from the wrapped collection
-            .map( ! )    // negation; if was empty then it `has NOT Elements`
-            .or(false)   // was none so definitely does not have elements
+    @inlinable var hasElements: Bool {
+        switch self {
+        case .some(let collection): return !collection.isEmpty
+        case .none: return false
+        }
     }
 
 

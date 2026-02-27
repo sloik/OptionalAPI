@@ -8,11 +8,8 @@ public extension Optional {
     ///
     /// - Parameter error: Closure producing an error.
     /// - Returns: Unwrapped value.
-    func throwOrGetValue(_ error: () -> Error) throws -> Wrapped {
-        if self == nil {
-            throw error()
-        }
-        
-        return self!
+    @inlinable func throwOrGetValue(_ error: () -> Error) throws -> Wrapped {
+        guard let value = self else { throw error() }
+        return value
     }
 }
