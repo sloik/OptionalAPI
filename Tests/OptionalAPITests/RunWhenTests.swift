@@ -1,188 +1,136 @@
-import XCTest
+import Testing
 import OptionalAPI
 
-class RunWhenTests: XCTestCase {
-    
-    func test_whenSome_shouldCallBlock_onlyWhenIsSome() {
-        // Arrange
-        let sut: Int? = 42
-        
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-        
-        // Act
-        sut.whenSome { wrapped in
-            XCTAssertEqual(wrapped, 42, "Should not modify value!")
-            shouldCallBlock.fulfill()
-        }
-        
-        // Assert
-        waitForExpectations(timeout: 2)
-    }
+@Suite struct RunWhenTests {
 
-    func test_asyncWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() async {
+    @Test func test_whenSome_shouldCallBlock_onlyWhenIsSome() async {
         let sut: Int? = 42
 
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-
-        await sut.asyncWhenSome { wrapped in
-            XCTAssertEqual(wrapped, 42, "Should not modify value!")
-            shouldCallBlock.fulfill()
+        await confirmation("Block should have been called!") { confirm in
+            sut.whenSome { wrapped in
+                #expect(wrapped == 42, "Should not modify value!")
+                confirm()
+            }
         }
-
-        await fulfillment(of: [shouldCallBlock], timeout: 2)
     }
 
-    func test_asyncWhenSome_withArgument_shouldNotCallBlock_whenNone() async {
+    @Test func test_asyncWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() async {
+        let sut: Int? = 42
+
+        await confirmation("Block should have been called!") { confirm in
+            await sut.asyncWhenSome { wrapped in
+                #expect(wrapped == 42, "Should not modify value!")
+                confirm()
+            }
+        }
+    }
+
+    @Test func test_asyncWhenSome_withArgument_shouldNotCallBlock_whenNone() async {
         let sut: Int? = .none
 
-        let shouldNotCallBlock = expectation(description: "Block should not have been called!")
-        shouldNotCallBlock.isInverted = true
-
-        await sut.asyncWhenSome { _ in
-            shouldNotCallBlock.fulfill()
+        await confirmation("Block should not have been called!", expectedCount: 0) { confirm in
+            await sut.asyncWhenSome { _ in
+                confirm()
+            }
         }
-
-        await fulfillment(of: [shouldNotCallBlock], timeout: 0.5)
-    }
-    
-    func test_whenSome_withNoArguments_shouldCallBlock_onlyWhenIsSome() {
-        // Arrange
-        let sut: Int? = 42
-        
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-        
-        // Act
-        sut.whenSome { shouldCallBlock.fulfill() }
-        
-        // Assert
-        waitForExpectations(timeout: 2)
     }
 
-    func test_asyncWhenSome_withNoArguments_shouldCallBlock_onlyWhenIsSome() async {
+    @Test func test_whenSome_withNoArguments_shouldCallBlock_onlyWhenIsSome() async {
         let sut: Int? = 42
 
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-
-        await sut.asyncWhenSome {
-            shouldCallBlock.fulfill()
+        await confirmation("Block should have been called!") { confirm in
+            sut.whenSome { confirm() }
         }
-
-        await fulfillment(of: [shouldCallBlock], timeout: 2)
     }
 
-    func test_asyncWhenSome_withNoArguments_shouldNotCallBlock_whenNone() async {
+    @Test func test_asyncWhenSome_withNoArguments_shouldCallBlock_onlyWhenIsSome() async {
+        let sut: Int? = 42
+
+        await confirmation("Block should have been called!") { confirm in
+            await sut.asyncWhenSome {
+                confirm()
+            }
+        }
+    }
+
+    @Test func test_asyncWhenSome_withNoArguments_shouldNotCallBlock_whenNone() async {
         let sut: Int? = .none
 
-        let shouldNotCallBlock = expectation(description: "Block should not have been called!")
-        shouldNotCallBlock.isInverted = true
-
-        await sut.asyncWhenSome {
-            shouldNotCallBlock.fulfill()
+        await confirmation("Block should not have been called!", expectedCount: 0) { confirm in
+            await sut.asyncWhenSome {
+                confirm()
+            }
         }
-
-        await fulfillment(of: [shouldNotCallBlock], timeout: 0.5)
-    }
-    
-    func test_whenNone_shouldCallBlock_onlyWhenIsSome() {
-        // Arrange
-        let sut: Int? = .none
-        
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-        
-        // Act
-        sut.whenNone { shouldCallBlock.fulfill() }
-        
-        // Assert
-        waitForExpectations(timeout: 2)
     }
 
-    func test_asyncWhenNone_shouldCallBlock_onlyWhenIsNone() async {
+    @Test func test_whenNone_shouldCallBlock_onlyWhenIsSome() async {
         let sut: Int? = .none
 
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-
-        await sut.asyncWhenNone {
-            shouldCallBlock.fulfill()
+        await confirmation("Block should have been called!") { confirm in
+            sut.whenNone { confirm() }
         }
-
-        await fulfillment(of: [shouldCallBlock], timeout: 2)
     }
 
-    func test_asyncWhenNone_shouldNotCallBlock_whenSome() async {
-        let sut: Int? = 42
-
-        let shouldNotCallBlock = expectation(description: "Block should not have been called!")
-        shouldNotCallBlock.isInverted = true
-
-        await sut.asyncWhenNone {
-            shouldNotCallBlock.fulfill()
-        }
-
-        await fulfillment(of: [shouldNotCallBlock], timeout: 0.5)
-    }
-
-    func test_tryWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() throws {
-        // Arrange
-        let sut: Int? = 42
-        
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-        
-        // Act
-        try sut.tryWhenSome { wrapped in
-            XCTAssertEqual(wrapped, 42, "Should not modify value!")
-            shouldCallBlock.fulfill()
-        }
-        
-        // Assert
-        waitForExpectations(timeout: 2)
-    }
-
-    func test_tryAsyncWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() async throws {
-        let sut: Int? = 42
-
-        let shouldCallBlock = expectation(description: "Block should have been called!")
-        shouldCallBlock.assertForOverFulfill = true
-
-        try await sut.tryAsyncWhenSome { wrapped in
-            XCTAssertEqual(wrapped, 42, "Should not modify value!")
-            shouldCallBlock.fulfill()
-        }
-
-        await fulfillment(of: [shouldCallBlock], timeout: 2)
-    }
-
-    func test_tryAsyncWhenSome_withArgument_shouldNotCallBlock_whenNone() async throws {
+    @Test func test_asyncWhenNone_shouldCallBlock_onlyWhenIsNone() async {
         let sut: Int? = .none
 
-        let shouldNotCallBlock = expectation(description: "Block should not have been called!")
-        shouldNotCallBlock.isInverted = true
-
-        try await sut.tryAsyncWhenSome { _ in
-            shouldNotCallBlock.fulfill()
+        await confirmation("Block should have been called!") { confirm in
+            await sut.asyncWhenNone {
+                confirm()
+            }
         }
-
-        await fulfillment(of: [shouldNotCallBlock], timeout: 0.5)
     }
 
-    func test_tryAsyncWhenSome_withArgument_shouldThrow_whenBlockThrows() async {
+    @Test func test_asyncWhenNone_shouldNotCallBlock_whenSome() async {
         let sut: Int? = 42
 
-        do {
+        await confirmation("Block should not have been called!", expectedCount: 0) { confirm in
+            await sut.asyncWhenNone {
+                confirm()
+            }
+        }
+    }
+
+    @Test func test_tryWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() async throws {
+        let sut: Int? = 42
+
+        await confirmation("Block should have been called!") { confirm in
+            try? sut.tryWhenSome { wrapped in
+                #expect(wrapped == 42, "Should not modify value!")
+                confirm()
+            }
+        }
+    }
+
+    @Test func test_tryAsyncWhenSome_withArgument_shouldCallBlock_onlyWhenIsSome() async throws {
+        let sut: Int? = 42
+
+        await confirmation("Block should have been called!") { confirm in
+            try? await sut.tryAsyncWhenSome { wrapped in
+                #expect(wrapped == 42, "Should not modify value!")
+                confirm()
+            }
+        }
+    }
+
+    @Test func test_tryAsyncWhenSome_withArgument_shouldNotCallBlock_whenNone() async throws {
+        let sut: Int? = .none
+
+        await confirmation("Block should not have been called!", expectedCount: 0) { confirm in
+            try? await sut.tryAsyncWhenSome { _ in
+                confirm()
+            }
+        }
+    }
+
+    @Test func test_tryAsyncWhenSome_withArgument_shouldThrow_whenBlockThrows() async {
+        let sut: Int? = 42
+
+        await #expect(throws: DummyError.self) {
             _ = try await sut.tryAsyncWhenSome { _ in
                 try await Task.sleep(nanoseconds: 42)
                 throw DummyError.boom
             }
-
-            XCTFail("Should not reach this point!")
-        } catch {
-            XCTAssert(error is DummyError)
         }
     }
 }

@@ -1,512 +1,327 @@
-import XCTest
+import Testing
 import OptionalAPI
 
-class FreeFunctionsTests: XCTestCase {
+@Suite struct FreeFunctionsTests {
 
-    func test_isNone() throws {
-        // Act & Assert
-        XCTAssertEqual(noneInt |> isNone,
-                       noneInt == nil)
-
-        XCTAssertEqual(someInt |> isNone,
-                       someInt == nil)
-
-        XCTAssertEqual(noneString |> isNone,
-                       noneString == nil)
-
-        XCTAssertEqual(emptySomeString |> isNone,
-                       emptySomeString == nil)
-
-        XCTAssertEqual(someSomeString |> isNone,
-                       someSomeString == nil)
-
-        XCTAssertEqual(noneIntArray |> isNone,
-                       noneIntArray == nil)
-
-        XCTAssertEqual(emptyIntArray |> isNone,
-                       emptyIntArray == nil)
-
-        XCTAssertEqual(someIntArray |> isNone,
-                       someIntArray == nil)
+    @Test func test_isNone() throws {
+        #expect((noneInt |> isNone) == (noneInt == nil))
+        #expect((someInt |> isNone) == (someInt == nil))
+        #expect((noneString |> isNone) == (noneString == nil))
+        #expect((emptySomeString |> isNone) == (emptySomeString == nil))
+        #expect((someSomeString |> isNone) == (someSomeString == nil))
+        #expect((noneIntArray |> isNone) == (noneIntArray == nil))
+        #expect((emptyIntArray |> isNone) == (emptyIntArray == nil))
+        #expect((someIntArray |> isNone) == (someIntArray == nil))
     }
 
-
-    func test_isSome() throws {
-        // Act & Assert
-        XCTAssertEqual(noneInt |> isSome,
-                       noneInt != nil)
-
-        XCTAssertEqual(someInt |> isSome,
-                       someInt != nil)
-
-        XCTAssertEqual(noneString |> isSome,
-                       noneString != nil)
-
-        XCTAssertEqual(emptySomeString |> isSome,
-                       emptySomeString != nil)
-
-        XCTAssertEqual(someSomeString |> isSome,
-                       someSomeString != nil)
-
-        XCTAssertEqual(noneIntArray |> isSome,
-                       noneIntArray != nil)
-
-        XCTAssertEqual(emptyIntArray |> isSome,
-                       emptyIntArray != nil)
-
-        XCTAssertEqual(someIntArray |> isSome,
-                       someIntArray != nil)
+    @Test func test_isSome() throws {
+        #expect((noneInt |> isSome) == (noneInt != nil))
+        #expect((someInt |> isSome) == (someInt != nil))
+        #expect((noneString |> isSome) == (noneString != nil))
+        #expect((emptySomeString |> isSome) == (emptySomeString != nil))
+        #expect((someSomeString |> isSome) == (someSomeString != nil))
+        #expect((noneIntArray |> isSome) == (noneIntArray != nil))
+        #expect((emptyIntArray |> isSome) == (emptyIntArray != nil))
+        #expect((someIntArray |> isSome) == (someIntArray != nil))
     }
 
+    @Test func test_isNotNone() throws {
+        #expect(!(noneInt |> isNotNone))
+        #expect((noneInt |> isNotNone) == (noneInt != nil))
 
-    func test_isNotNone() throws {
-        // Act & Assert
-        XCTAssertFalse(noneInt |> isNotNone)
-        XCTAssertEqual(noneInt |> isNotNone,
-                       noneInt != nil)
-
-        XCTAssertTrue (someInt |> isNotNone)
-        XCTAssertEqual(someInt |> isNotNone,
-                       someInt != nil)
+        #expect(someInt |> isNotNone)
+        #expect((someInt |> isNotNone) == (someInt != nil))
     }
 
-
-    // MARK: - or
-
-    func test_or_shouldNotChangeSome() {
-        XCTAssertEqual(
-            or(someInt, 69),
-            someInt
-        )
-
-        XCTAssertEqual(
-            or(someInt, { print(#function) ; return 69 }),
-            someInt
-        )
+    @Test func test_or_shouldNotChangeSome() {
+        #expect(or(someInt, 69) == someInt)
+        #expect(or(someInt, { print(#function); return 69 }) == someInt)
     }
 
-
-    func test_or_shouldGiveDefaultValue() {
-        XCTAssertEqual(
-            noneInt.or(69),
-            69
-        )
-
-        XCTAssertEqual(
-            or(noneInt, { print(#function) ; return 69 }),
-            69
-        )
+    @Test func test_or_shouldGiveDefaultValue() {
+        #expect(noneInt.or(69) == 69)
+        #expect(or(noneInt, { print(#function); return 69 }) == 69)
     }
 
-
-    // MARK: - andThen
-    func test_andThen_should_operateOnWrappedValue() {
-        // Arrange
-        let didCallTransform = expectation(description: "transform was called")
-
-        // Act
-        andThen(
-            someInt,
-            { _ in didCallTransform.fulfill() }
-        )
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_andThen_should_operateOnWrappedValue() async {
+        await confirmation("transform was called") { confirm in
+            andThen(someInt, { _ in confirm() })
+        }
     }
 
-
-    func test_andThen_should_callEachAndThenBlockForSomeCases() {
-        // Arrange
-        let didCallTransform = expectation(description: "transform was called")
-        didCallTransform.expectedFulfillmentCount = 3
-
-        // Act
-        _ = someInt
-            |> andThen({ (wrapped: Int) -> Int in
-                didCallTransform.fulfill()
-                return wrapped
-            })
-            |> andThen({ (wrapped: Int) -> Int in
-                didCallTransform.fulfill()
-                return wrapped
-            })
-            |> andThen({ (wrapped: Int) -> Int in
-                didCallTransform.fulfill()
-                return wrapped
-            })
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_andThen_should_callEachAndThenBlockForSomeCases() async {
+        await confirmation("transform was called", expectedCount: 3) { confirm in
+            _ = someInt
+                |> andThen({ (wrapped: Int) -> Int in
+                    confirm()
+                    return wrapped
+                })
+                |> andThen({ (wrapped: Int) -> Int in
+                    confirm()
+                    return wrapped
+                })
+                |> andThen({ (wrapped: Int) -> Int in
+                    confirm()
+                    return wrapped
+                })
+        }
     }
 
-    func test_andThen_should_passInTheWrappedValue() {
-        // Arrange
+    @Test func test_andThen_should_passInTheWrappedValue() {
         var accumulator: [Int] = []
 
-        // Act
-        andThen(
-            someInt,
-            { wrapped in accumulator.append(wrapped) }
-        )
+        andThen(someInt, { wrapped in accumulator.append(wrapped) })
 
-        // Assert
-        XCTAssertEqual(accumulator, [42])
+        #expect(accumulator == [42])
     }
 
-    func test_andThenCurried_should_passInTheWrappedValue() {
-        // Arrange
+    @Test func test_andThenCurried_should_passInTheWrappedValue() {
         var accumulator: [Int] = []
 
-        // Act
-        someInt
-            |> andThen({ wrapped in accumulator.append(wrapped) })
+        someInt |> andThen({ wrapped in accumulator.append(wrapped) })
 
-        // Assert
-        XCTAssertEqual(accumulator, [42])
+        #expect(accumulator == [42])
     }
 
-
-    func test_andThen_should_returnedTransformedValue() {
-        // Act & Assert
-        XCTAssertEqual(
-            someInt
-                |> andThen({ wrapped in wrapped + 1 }),
-            .some(42 + 1)
+    @Test func test_andThen_should_returnedTransformedValue() {
+        #expect(
+            (someInt |> andThen({ wrapped in wrapped + 1 })) == .some(42 + 1)
         )
     }
 
-    func test_andThen_shouldNot_operateOnNoneCase() {
-        // Arrange
-        let didCallTransform = expectation(description: "transform was called")
-        didCallTransform.isInverted = true
-
-        // Act
-        noneInt
-            |> andThen({ _ in didCallTransform.fulfill() })
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_andThen_shouldNot_operateOnNoneCase() async {
+        await confirmation("transform was called", expectedCount: 0) { confirm in
+            noneInt |> andThen({ _ in confirm() })
+        }
     }
 
-
-    // MARK: - mapNone
-    func test_mapNone_should_operateOnNoneValue() {
-        // Arrange
-        let didCallTransform = expectation(description: "transform was called")
-
-        // Act
-        mapNone(
-            noneInt,
-            {
-                didCallTransform.fulfill()
-                return 24 }
-        )
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_mapNone_should_operateOnNoneValue() async {
+        await confirmation("transform was called") { confirm in
+            mapNone(noneInt, {
+                confirm()
+                return 24
+            })
+        }
     }
 
-    func test_mapNoneCurried_should_operateOnNoneValue() {
-        // Arrange
-        let didCallTransform = expectation(description: "transform was called")
-
-        // Act
-        noneInt
-            |> mapNone({
-                didCallTransform.fulfill()
-                return 24 })
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_mapNoneCurried_should_operateOnNoneValue() async {
+        await confirmation("transform was called") { confirm in
+            noneInt |> mapNone({
+                confirm()
+                return 24
+            })
+        }
     }
 
-    func test_mapNone_shouldNot_operateOnSomeValue() {
-        // Arrange
-        let didCallTransform = expectation(description: "transform was called")
-        didCallTransform.isInverted = true
-
-        // Act
-        someInt
-            |> mapNone({
-                didCallTransform.fulfill()
-                return 24})
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_mapNone_shouldNot_operateOnSomeValue() async {
+        await confirmation("transform was called", expectedCount: 0) { confirm in
+            someInt |> mapNone({
+                confirm()
+                return 24
+            })
+        }
     }
 
-    func test_mapNone_should_returnedSameSomeForSomeValue() {
-        // Act
-        let result = someInt
-            |> mapNone(24)
+    @Test func test_mapNone_should_returnedSameSomeForSomeValue() {
+        let result = someInt |> mapNone(24)
 
-        // Assert
-        XCTAssertEqual(someInt, result)
+        #expect(someInt == result)
     }
 
-    func test_default_should_returnDefaultValueForNoneCase() {
-        // Arrange
+    @Test func test_default_should_returnDefaultValueForNoneCase() {
         let defaultValue = 24
 
-        // Act
-        let result =
-            defaultSome(noneInt, defaultValue)
+        let result = defaultSome(noneInt, defaultValue)
 
-        // Assert
-        XCTAssertNotNil(result)
-        XCTAssertEqual(defaultValue, result)
+        #expect(result != nil)
+        #expect(defaultValue == result)
     }
 
-    func test_defaultCurried_should_returnDefaultValueForNoneCase() {
-        // Arrange
+    @Test func test_defaultCurried_should_returnDefaultValueForNoneCase() {
         let defaultValue = 24
 
-        // Act
-        let result =
-            noneInt |> defaultSome(defaultValue)
+        let result = noneInt |> defaultSome(defaultValue)
 
-        // Assert
-        XCTAssertNotNil(result)
-        XCTAssertEqual(defaultValue, result)
+        #expect(result != nil)
+        #expect(defaultValue == result)
     }
 
-
-    func test_default_should_returnedSameSomeForSomeValue() {
-        // Arrange
+    @Test func test_default_should_returnedSameSomeForSomeValue() {
         let defaultValue = 24
 
-        // Act
-        let result = someInt
-            |> defaultSome(defaultValue)
+        let result = someInt |> defaultSome(defaultValue)
 
-        // Assert
-        XCTAssertNotNil(result)
-        XCTAssertEqual(someInt, result)
+        #expect(result != nil)
+        #expect(someInt == result)
     }
 
-    func test_or_typeShouldBe_wrapped() {
+    @Test func test_or_typeShouldBe_wrapped() {
         var intExpected: Int = someInt |> or(69)
         intExpected = noneInt |> or(69)
 
-        // Redundant test but show how type system
-        // is checking that's correct.
-        XCTAssertTrue(
-            intExpected is Int
-        )
+        #expect(intExpected is Int)
     }
 
-    func test_or_forNone_shouldReturn_providedDefault() {
-        XCTAssertEqual(
-            noneInt |> or(69),
-            69
-        )
-
-        XCTAssertEqual(
-            noneString |> or("default string"),
-            "default string"
-        )
+    @Test func test_or_forNone_shouldReturn_providedDefault() {
+        #expect((noneInt |> or(69)) == 69)
+        #expect((noneString |> or("default string")) == "default string")
     }
 
-    func test_or_forSome_shouldReturn_wrappedValue() {
-        XCTAssertEqual(
-            someInt |> or(69),
-            42
-        )
-
-        XCTAssertEqual(
-            someSomeString |> or("default string"),
-            "some string"
-        )
+    @Test func test_or_forSome_shouldReturn_wrappedValue() {
+        #expect((someInt |> or(69)) == 42)
+        #expect((someSomeString |> or("default string")) == "some string")
     }
 
-    // MARK: - Collections Properties
-
-    func test_isNoneOrEmpty() {
-        XCTAssertEqual(
-            noneString |> isNoneOrEmpty,
-            noneString == nil || noneString!.isEmpty
+    @Test func test_isNoneOrEmpty() {
+        #expect(
+            (noneString |> isNoneOrEmpty) == (noneString == nil || noneString!.isEmpty)
         )
-        XCTAssertTrue(noneString |> isNoneOrEmpty)
+        #expect(noneString |> isNoneOrEmpty)
 
-        XCTAssertEqual(
-            emptySomeString |> isNoneOrEmpty,
-            emptySomeString == nil || emptySomeString!.isEmpty
+        #expect(
+            (emptySomeString |> isNoneOrEmpty) == (emptySomeString == nil || emptySomeString!.isEmpty)
         )
-        XCTAssertTrue(emptySomeString |> isNoneOrEmpty)
+        #expect(emptySomeString |> isNoneOrEmpty)
 
-        XCTAssertEqual(
-            someSomeString |> isNoneOrEmpty,
-            someSomeString == nil || someSomeString!.isEmpty
+        #expect(
+            (someSomeString |> isNoneOrEmpty) == (someSomeString == nil || someSomeString!.isEmpty)
         )
-        XCTAssertFalse(someSomeString |> isNoneOrEmpty)
+        #expect(!(someSomeString |> isNoneOrEmpty))
 
-        XCTAssertEqual(
-            noneIntArray |> isNoneOrEmpty,
-            noneIntArray == nil || noneIntArray!.isEmpty
+        #expect(
+            (noneIntArray |> isNoneOrEmpty) == (noneIntArray == nil || noneIntArray!.isEmpty)
         )
-        XCTAssertTrue(noneIntArray |> isNoneOrEmpty)
+        #expect(noneIntArray |> isNoneOrEmpty)
 
-        XCTAssertEqual(
-            emptyIntArray |> isNoneOrEmpty,
-            emptyIntArray == nil || emptyIntArray!.isEmpty
+        #expect(
+            (emptyIntArray |> isNoneOrEmpty) == (emptyIntArray == nil || emptyIntArray!.isEmpty)
         )
-        XCTAssertTrue(emptyIntArray |> isNoneOrEmpty)
+        #expect(emptyIntArray |> isNoneOrEmpty)
 
-        XCTAssertEqual(
-            someIntArray |> isNoneOrEmpty,
-            someIntArray == nil || someIntArray!.isEmpty
+        #expect(
+            (someIntArray |> isNoneOrEmpty) == (someIntArray == nil || someIntArray!.isEmpty)
         )
-        XCTAssertFalse(someIntArray |> isNoneOrEmpty)
+        #expect(!(someIntArray |> isNoneOrEmpty))
     }
 
-    func test_hasElements() {
-
-        XCTAssertEqual(
-            noneString |> hasElements,
-            noneString != nil && noneString!.isEmpty == false
+    @Test func test_hasElements() {
+        #expect(
+            (noneString |> hasElements) == (noneString != nil && noneString!.isEmpty == false)
         )
-        XCTAssertFalse(noneString |> hasElements)
+        #expect(!(noneString |> hasElements))
 
-        XCTAssertEqual(
-            emptySomeString |> hasElements,
-            emptySomeString != nil && emptySomeString!.isEmpty == false
+        #expect(
+            (emptySomeString |> hasElements) == (emptySomeString != nil && emptySomeString!.isEmpty == false)
         )
-        XCTAssertFalse(emptySomeString |> hasElements)
+        #expect(!(emptySomeString |> hasElements))
 
-        XCTAssertEqual(
-            someSomeString |> hasElements,
-            someSomeString != nil && someSomeString!.isEmpty == false
+        #expect(
+            (someSomeString |> hasElements) == (someSomeString != nil && someSomeString!.isEmpty == false)
         )
-        XCTAssertTrue (someSomeString |> hasElements)
+        #expect(someSomeString |> hasElements)
 
-        XCTAssertEqual(
-            noneIntArray |> hasElements,
-            noneIntArray != nil && noneIntArray!.isEmpty == false
+        #expect(
+            (noneIntArray |> hasElements) == (noneIntArray != nil && noneIntArray!.isEmpty == false)
         )
-        XCTAssertFalse(noneIntArray |> hasElements)
+        #expect(!(noneIntArray |> hasElements))
 
-        XCTAssertEqual(
-            emptyIntArray |> hasElements,
-            emptyIntArray != nil && emptyIntArray!.isEmpty == false
+        #expect(
+            (emptyIntArray |> hasElements) == (emptyIntArray != nil && emptyIntArray!.isEmpty == false)
         )
-        XCTAssertFalse(emptyIntArray |> hasElements)
+        #expect(!(emptyIntArray |> hasElements))
 
-
-        XCTAssertEqual(
-            someIntArray |> hasElements,
-            someIntArray != nil && someIntArray!.isEmpty == false
+        #expect(
+            (someIntArray |> hasElements) == (someIntArray != nil && someIntArray!.isEmpty == false)
         )
-        XCTAssertTrue (someIntArray |> hasElements)
+        #expect(someIntArray |> hasElements)
     }
 
-    func test_recoverFromEmpty_shouldNotBeCalledForNoneCase(){
-        // Arrange
-        let didCallTransform = expectation(description: "recover was called")
-        didCallTransform.isInverted = true
-
-        // Act
-        noneIntArray
-            |> recoverFromEmpty({ () -> [Int] in
-                didCallTransform.fulfill()
-                return [24]})
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+    @Test func test_recoverFromEmpty_shouldNotBeCalledForNoneCase() async {
+        await confirmation("recover was called", expectedCount: 0) { confirm in
+            noneIntArray |> recoverFromEmpty({ () -> [Int] in
+                confirm()
+                return [24]
+            })
+        }
     }
 
-    func test_recoverFromEmpty_shouldNotBeCalledFor_Not_EmptyCollection(){
-        // Arrange
-        let didCallTransform = expectation(description: "recover was called")
-        didCallTransform.isInverted = true
+    @Test func test_recoverFromEmpty_shouldNotBeCalledFor_Not_EmptyCollection() async {
+        await confirmation("recover was called", expectedCount: 0) { confirm in
+            let stringResult =
+                someSomeString
+                    |> recoverFromEmpty({ () -> String in
+                        confirm()
+                        return "srting was empty"
+                    }())
 
-        // Act
-        let stringResult =
-            someSomeString
-                |> recoverFromEmpty({ () -> String in
-                    didCallTransform.fulfill()
-                    return "srting was empty"}())
+            #expect(stringResult == someSomeString)
 
-        XCTAssertEqual(stringResult, someSomeString)
+            let intArrayResult =
+                someIntArray
+                    .recoverFromEmpty({
+                        confirm()
+                        return [5, 10, 15]
+                    }())
 
-        let intArrayResult =
-            someIntArray
-                .recoverFromEmpty({
-                    didCallTransform.fulfill()
-                    return [5,10,15]}())
-
-        XCTAssertEqual(intArrayResult, someIntArray)
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+            #expect(intArrayResult == someIntArray)
+        }
     }
 
-    func test_default_shouldNotBeCalledFor_NotEmptyCollectionsOrSomeValues(){
-        // Arrange
-        let didCallTransform = expectation(description: "recover was not called")
-        didCallTransform.isInverted = true
-
+    @Test func test_default_shouldNotBeCalledFor_NotEmptyCollectionsOrSomeValues() async {
         let stringDefault = "default string"
-        let intArrayDefault = [5,10,15]
+        let intArrayDefault = [5, 10, 15]
         let intDefault = 24
 
-        // Act
-        XCTAssertEqual(
-            someSomeString
-                |> defaultSome({ () -> String in
-                    didCallTransform.fulfill()
-                    return stringDefault}()),
+        await confirmation("recover was not called", expectedCount: 0) { confirm in
+            #expect(
+                (someSomeString
+                    |> defaultSome({ () -> String in
+                        confirm()
+                        return stringDefault
+                    }())) == someSomeString
+            )
 
-            someSomeString
-        )
+            #expect(
+                (someIntArray
+                    |> defaultSome({ () -> [Int] in
+                        confirm()
+                        return intArrayDefault
+                    }())) == someIntArray
+            )
 
-        XCTAssertEqual(
-            someIntArray
-                |> defaultSome({ () -> [Int] in
-                    didCallTransform.fulfill()
-                    return intArrayDefault}()),
-
-            someIntArray
-        )
-
-        XCTAssertEqual(
-            someInt
-                |> defaultSome({ () -> Int in
-                    didCallTransform.fulfill()
-                    return intDefault}),
-
-            someInt
-        )
-
-        // Assert
-        waitForExpectations(timeout: 0.5)
+            #expect(
+                (someInt
+                    |> defaultSome({ () -> Int in
+                        confirm()
+                        return intDefault
+                    })) == someInt
+            )
+        }
     }
 
-    func test_randomChaining_stuff() {
-        XCTAssertEqual(
-            someInt
+    @Test func test_randomChaining_stuff() {
+        #expect(
+            (someInt
                 |> defaultSome(5)
                 |> andThen({ (i: Int) -> Int in i + 1 })
                 |> andThen({ (_) -> Int? in .none })
-                |> defaultSome(42),
-            42,
+                |> defaultSome(42)) == 42,
             "Final result should equal to the last default value"
         )
 
-        XCTAssertEqual(
-            noneInt
+        #expect(
+            (noneInt
                 |> defaultSome(5)
                 |> andThen({ (i: Int) -> Int in i + 1 })
                 |> andThen({ (_) -> Int? in .none })
-                |> defaultSome(42),
-            42,
+                |> defaultSome(42)) == 42,
             "Final result should equal to the last default value"
         )
 
-        XCTAssertEqual(
-            noneInt
+        #expect(
+            (noneInt
                 |> andThen({ $0 + 1 })
-                |> defaultSome(42),
-            42,
+                |> defaultSome(42)) == 42,
             "Final result should equal to the last default value"
         )
     }

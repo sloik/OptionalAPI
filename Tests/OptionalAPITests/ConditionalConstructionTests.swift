@@ -1,75 +1,75 @@
-import XCTest
+import Testing
 @testable import OptionalAPI
 
-final class ConditionalConstructionTests: XCTestCase {
+@Suite struct ConditionalConstructionTests {
 
     // MARK: - someWhen
 
-    func test_someWhen_predicateTrue_returnsSome() {
+    @Test func test_someWhen_predicateTrue_returnsSome() {
         let result = someWhen({ $0 > 18 }, 42)
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_someWhen_predicateFalse_returnsNone() {
+    @Test func test_someWhen_predicateFalse_returnsNone() {
         let result = someWhen({ $0 > 18 }, 10)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_someWhen_curried_predicateTrue() {
+    @Test func test_someWhen_curried_predicateTrue() {
         let adults: (Int) -> Int? = someWhen { $0 >= 18 }
 
-        XCTAssertEqual(adults(42), 42)
+        #expect(adults(42) == 42)
     }
 
-    func test_someWhen_curried_predicateFalse() {
+    @Test func test_someWhen_curried_predicateFalse() {
         let adults: (Int) -> Int? = someWhen { $0 >= 18 }
 
-        XCTAssertNil(adults(10))
+        #expect(adults(10) == nil)
     }
 
-    func test_someWhen_withString() {
+    @Test func test_someWhen_withString() {
         let nonEmpty: (String) -> String? = someWhen { !$0.isEmpty }
 
-        XCTAssertEqual(nonEmpty("hello"), "hello")
-        XCTAssertNil(nonEmpty(""))
+        #expect(nonEmpty("hello") == "hello")
+        #expect(nonEmpty("") == nil)
     }
 
     // MARK: - noneWhen
 
-    func test_noneWhen_predicateTrue_returnsNone() {
+    @Test func test_noneWhen_predicateTrue_returnsNone() {
         let result = noneWhen({ $0 > 100 }, 200)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_noneWhen_predicateFalse_returnsSome() {
+    @Test func test_noneWhen_predicateFalse_returnsSome() {
         let result = noneWhen({ $0 > 100 }, 42)
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_noneWhen_curried() {
+    @Test func test_noneWhen_curried() {
         let notEmpty: (String) -> String? = noneWhen(\.isEmpty)
 
-        XCTAssertEqual(notEmpty("hello"), "hello")
-        XCTAssertNil(notEmpty(""))
+        #expect(notEmpty("hello") == "hello")
+        #expect(notEmpty("") == nil)
     }
 
     // MARK: - composition
 
-    func test_someWhen_composesWithAndThen() {
+    @Test func test_someWhen_composesWithAndThen() {
         let result = someWhen({ $0 > 0 }, 42)
             .andThen { $0 * 2 }
 
-        XCTAssertEqual(result, 84)
+        #expect(result == 84)
     }
 
-    func test_noneWhen_composesWithMapNone() {
+    @Test func test_noneWhen_composesWithMapNone() {
         let result = noneWhen({ $0 > 100 }, 200)
             .mapNone(0)
 
-        XCTAssertEqual(result, 0)
+        #expect(result == 0)
     }
 }

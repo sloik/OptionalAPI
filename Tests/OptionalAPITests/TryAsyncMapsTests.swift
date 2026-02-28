@@ -1,22 +1,19 @@
-
-import Foundation
-
-import XCTest
+import Testing
 import OptionalAPI
 
-final class TryAsyncMapsTests: XCTestCase {
+@Suite struct TryAsyncMapsTests {
 
     // MARK: Map
 
-    func test_tryAsyncMap_whenNone_shouldNotCallTransform_andReturn_none() async throws {
+    @Test func test_tryAsyncMap_whenNone_shouldNotCallTransform_andReturn_none() async throws {
         let none: Int? = .none
 
-        let result: Void? = try await none.tryAsyncMap { _ in XCTFail( "Should not call this closure!" ) }
+        let result: Void? = try await none.tryAsyncMap { _ in Issue.record("Should not call this closure!") }
 
-        XCTAssertNil( result )
+        #expect(result == nil)
     }
 
-    func test_tryAsyncMap_whenSome_shouldCallTransform_andReturn_expectedValue() async throws {
+    @Test func test_tryAsyncMap_whenSome_shouldCallTransform_andReturn_expectedValue() async throws {
         let some: Int? = 42
 
         let result: Int? = try await some.tryAsyncMap { wrapped in
@@ -24,39 +21,33 @@ final class TryAsyncMapsTests: XCTestCase {
             return wrapped * 2
         }
 
-        XCTAssertEqual(result, 84)
+        #expect(result == 84)
     }
 
-    func test_tryAsyncMap_whenSome_whenTransformThrows_shouldThrow() async throws {
-
+    @Test func test_tryAsyncMap_whenSome_whenTransformThrows_shouldThrow() async throws {
         let some: Int? = 42
 
         enum E: Error { case e }
 
-        do {
+        await #expect(throws: E.self) {
             try await some.tryAsyncMap { wrapped in
                 try! await Task.sleep(nanoseconds: 42)
                 throw E.e
             }
-
-            XCTFail("Should not reach this point!")
-        } catch {
-            XCTAssert(error is E)
         }
     }
 
-
     // MARK: Flat Map
 
-    func test_tryAsyncFlatMap_whenNone_shouldNotCallTransform_andReturn_none() async throws {
+    @Test func test_tryAsyncFlatMap_whenNone_shouldNotCallTransform_andReturn_none() async throws {
         let none: Int? = .none
 
-        let result: Void? = try await none.tryAsyncFlatMap { _ in XCTFail( "Should not call this closure!" ) }
+        let result: Void? = try await none.tryAsyncFlatMap { _ in Issue.record("Should not call this closure!") }
 
-        XCTAssertNil( result )
+        #expect(result == nil)
     }
 
-    func test_tryAsyncFlatMap_whenSome_shouldCallTransform_andReturn_expectedValue() async throws {
+    @Test func test_tryAsyncFlatMap_whenSome_shouldCallTransform_andReturn_expectedValue() async throws {
         let some: Int? = 42
 
         let result: Int? = try await some.tryAsyncFlatMap { wrapped in
@@ -64,10 +55,10 @@ final class TryAsyncMapsTests: XCTestCase {
             return wrapped * 2
         }
 
-        XCTAssertEqual(result, 84)
+        #expect(result == 84)
     }
 
-    func test_tryAsyncFlatMap_whenSome_whenTransformReturns_optionalValue_shouldReturnExpectedResult() async throws {
+    @Test func test_tryAsyncFlatMap_whenSome_whenTransformReturns_optionalValue_shouldReturnExpectedResult() async throws {
         let some: String? = "42"
 
         let result: Int? = try await some.tryAsyncFlatMap { (w: String) -> Int? in
@@ -75,10 +66,10 @@ final class TryAsyncMapsTests: XCTestCase {
             return Int(w)
         }
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_tryAsyncFlatMap_longerPipeline() async throws {
+    @Test func test_tryAsyncFlatMap_longerPipeline() async throws {
         let some: Int? = 42
 
         let result: Int? = try await some
@@ -90,6 +81,6 @@ final class TryAsyncMapsTests: XCTestCase {
                 fromAsync * 10
             }
 
-        XCTAssertEqual(result, 430)
+        #expect(result == 430)
     }
 }

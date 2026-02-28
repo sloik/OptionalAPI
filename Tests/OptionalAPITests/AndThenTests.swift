@@ -1,54 +1,43 @@
-
 import Foundation
-
-import XCTest
+import Testing
 import OptionalAPI
 
-final class AndThenTests: XCTestCase {
-    
-    func test_andThenTry_whenSomeCase_transformsThrowsAnError_should_returnOptional() {
-        XCTAssertNoThrow(
-            someSomeString.andThenTry( alwaysThrowing ),
-            "Error in throwing function should be handled by the operator!"
-        )
-        
-        XCTAssertNil(
-            someSomeString.andThenTry( alwaysThrowing ),
-            "Error in throwing function should make operator return `none`!"
-        )
-    }
-    
-    func test_andThenTry_whenSomeCase_transformsDoesNotThrowsAnError_should_returnOptionalWithTransformedValue() {
-        XCTAssertNoThrow(
-            someSomeString.andThenTry( alwaysReturningString ),
-            "Error in throwing function should be handled by the operator!"
-        )
-        
-        XCTAssertEqual(
-            someSomeString.andThenTry( alwaysReturningString ),
-            "It works fine",
-            "When throwing transform does not throw returned value should be returned!"
-        )
-        
-        codableStructAsData
-            .andThenTry{ data in try JSONDecoder().decode(CodableStruct.self, from: data) }
-            .andThen { (instance: CodableStruct) in
-                
-            }
+@Suite struct AndThenTests {
+
+    @Test func test_andThenTry_whenSomeCase_transformsThrowsAnError_should_returnOptional() {
+        #expect(throws: Never.self) {
+            _ = someSomeString.andThenTry(alwaysThrowing)
+        }
+
+        #expect(someSomeString.andThenTry(alwaysThrowing) == nil)
     }
 
-    func test_asyncAndThen_whenNone_shouldNotCallTransform_andReturnNone() async {
+    @Test func test_andThenTry_whenSomeCase_transformsDoesNotThrowsAnError_should_returnOptionalWithTransformedValue() {
+        #expect(throws: Never.self) {
+            _ = someSomeString.andThenTry(alwaysReturningString)
+        }
+
+        #expect(
+            someSomeString.andThenTry(alwaysReturningString) == "It works fine"
+        )
+
+        codableStructAsData
+            .andThenTry { data in try JSONDecoder().decode(CodableStruct.self, from: data) }
+            .andThen { (_: CodableStruct) in }
+    }
+
+    @Test func test_asyncAndThen_whenNone_shouldNotCallTransform_andReturnNone() async {
         let none: Int? = .none
 
         let result: Int? = await none.asyncAndThen { _ in
-            XCTFail("Should not call this closure!")
+            Issue.record("Should not call this closure!")
             return 42
         }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_asyncAndThen_whenSome_shouldCallTransform_andReturnExpectedValue() async {
+    @Test func test_asyncAndThen_whenSome_shouldCallTransform_andReturnExpectedValue() async {
         let some: Int? = 41
 
         let result: Int? = await some.asyncAndThen { wrapped in
@@ -56,21 +45,21 @@ final class AndThenTests: XCTestCase {
             return wrapped + 1
         }
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_tryAsyncAndThenTryOrThrow_whenNone_shouldNotCallTransform_andReturnNone() async throws {
+    @Test func test_tryAsyncAndThenTryOrThrow_whenNone_shouldNotCallTransform_andReturnNone() async throws {
         let none: Int? = .none
 
         let result: Int? = try await none.tryAsyncAndThenTryOrThrow { _ in
-            XCTFail("Should not call this closure!")
+            Issue.record("Should not call this closure!")
             return 42
         }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_tryAsyncAndThenTryOrThrow_whenSome_shouldCallTransform_andReturnExpectedValue() async throws {
+    @Test func test_tryAsyncAndThenTryOrThrow_whenSome_shouldCallTransform_andReturnExpectedValue() async throws {
         let some: Int? = 41
 
         let result: Int? = try await some.tryAsyncAndThenTryOrThrow { wrapped in
@@ -78,36 +67,32 @@ final class AndThenTests: XCTestCase {
             return wrapped + 1
         }
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_tryAsyncAndThenTryOrThrow_whenSome_whenTransformThrows_shouldThrow() async {
+    @Test func test_tryAsyncAndThenTryOrThrow_whenSome_whenTransformThrows_shouldThrow() async {
         let some: Int? = 41
 
-        do {
+        await #expect(throws: DummyError.self) {
             _ = try await some.tryAsyncAndThenTryOrThrow { _ in
                 try await Task.sleep(nanoseconds: 42)
                 throw DummyError.boom
             }
-
-            XCTFail("Should not reach this point!")
-        } catch {
-            XCTAssert(error is DummyError)
         }
     }
 
-    func test_tryAsyncAndThenTry_whenNone_shouldNotCallTransform_andReturnNone() async throws {
+    @Test func test_tryAsyncAndThenTry_whenNone_shouldNotCallTransform_andReturnNone() async throws {
         let none: Int? = .none
 
         let result: Int? = try await none.tryAsyncAndThenTry { _ in
-            XCTFail("Should not call this closure!")
+            Issue.record("Should not call this closure!")
             return 42
         }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_tryAsyncAndThenTry_whenSome_shouldCallTransform_andReturnExpectedValue() async throws {
+    @Test func test_tryAsyncAndThenTry_whenSome_shouldCallTransform_andReturnExpectedValue() async throws {
         let some: Int? = 41
 
         let result: Int? = try await some.tryAsyncAndThenTry { wrapped in
@@ -115,10 +100,10 @@ final class AndThenTests: XCTestCase {
             return wrapped + 1
         }
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_tryAsyncAndThenTry_whenSome_whenTransformThrows_shouldReturnNone() async throws {
+    @Test func test_tryAsyncAndThenTry_whenSome_whenTransformThrows_shouldReturnNone() async throws {
         let some: Int? = 41
 
         let result: Int? = try await some.tryAsyncAndThenTry { _ in
@@ -126,6 +111,6 @@ final class AndThenTests: XCTestCase {
             throw DummyError.boom
         }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 }

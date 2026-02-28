@@ -1,130 +1,120 @@
-import XCTest
+import Testing
 @testable import OptionalAPI
 
-final class TraversableTests: XCTestCase {
+@Suite struct TraversableTests {
 
-    // MARK: - sequence free function
-
-    func test_sequence_allSome_returnsSomeArray() {
+    @Test func test_sequence_allSome_returnsSomeArray() {
         let optionals: [Int?] = [1, 2, 3]
 
         let result = sequence(optionals)
 
-        XCTAssertEqual(result, [1, 2, 3])
+        #expect(result == [1, 2, 3])
     }
 
-    func test_sequence_hasNone_returnsNone() {
+    @Test func test_sequence_hasNone_returnsNone() {
         let optionals: [Int?] = [1, nil, 3]
 
         let result = sequence(optionals)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_sequence_allNone_returnsNone() {
+    @Test func test_sequence_allNone_returnsNone() {
         let optionals: [Int?] = [nil, nil, nil]
 
         let result = sequence(optionals)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_sequence_emptyArray_returnsSomeEmpty() {
+    @Test func test_sequence_emptyArray_returnsSomeEmpty() {
         let optionals: [Int?] = []
 
         let result = sequence(optionals)
 
-        XCTAssertEqual(result, [])
+        #expect(result == [])
     }
 
-    func test_sequence_singleSome_returnsSingleArray() {
+    @Test func test_sequence_singleSome_returnsSingleArray() {
         let optionals: [Int?] = [42]
 
         let result = sequence(optionals)
 
-        XCTAssertEqual(result, [42])
+        #expect(result == [42])
     }
 
-    func test_sequence_singleNone_returnsNone() {
+    @Test func test_sequence_singleNone_returnsNone() {
         let optionals: [Int?] = [nil]
 
         let result = sequence(optionals)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    // MARK: - sequence Array extension
-
-    func test_sequenceExtension_allSome_returnsSomeArray() {
+    @Test func test_sequenceExtension_allSome_returnsSomeArray() {
         let optionals: [Int?] = [1, 2, 3]
 
         let result: [Int]? = optionals.sequence()
 
-        XCTAssertEqual(result, [1, 2, 3])
+        #expect(result == [1, 2, 3])
     }
 
-    func test_sequenceExtension_hasNone_returnsNone() {
+    @Test func test_sequenceExtension_hasNone_returnsNone() {
         let optionals: [Int?] = [1, nil, 3]
 
         let result: [Int]? = optionals.sequence()
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    // MARK: - traverse free function
-
-    func test_traverse_allSucceed_returnsSomeArray() {
+    @Test func test_traverse_allSucceed_returnsSomeArray() {
         let strings = ["1", "2", "3"]
 
         let result = traverse(strings) { Int($0) }
 
-        XCTAssertEqual(result, [1, 2, 3])
+        #expect(result == [1, 2, 3])
     }
 
-    func test_traverse_someFail_returnsNone() {
+    @Test func test_traverse_someFail_returnsNone() {
         let strings = ["1", "abc", "3"]
 
         let result = traverse(strings) { Int($0) }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_traverse_emptyArray_returnsSomeEmpty() {
+    @Test func test_traverse_emptyArray_returnsSomeEmpty() {
         let strings: [String] = []
 
         let result = traverse(strings) { Int($0) }
 
-        XCTAssertEqual(result, [])
+        #expect(result == [])
     }
 
-    func test_traverse_allFail_returnsNone() {
+    @Test func test_traverse_allFail_returnsNone() {
         let strings = ["abc", "def"]
 
         let result = traverse(strings) { Int($0) }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    // MARK: - traverse curried
-
-    func test_traverse_curried() {
+    @Test func test_traverse_curried() {
         let parseInt: ([String]) -> [Int]? = traverse { Int($0) }
 
-        XCTAssertEqual(parseInt(["1", "2"]), [1, 2])
-        XCTAssertNil(parseInt(["1", "abc"]))
+        #expect(parseInt(["1", "2"]) == [1, 2])
+        #expect(parseInt(["1", "abc"]) == nil)
     }
 
-    // MARK: - traverse Array extension
-
-    func test_traverseExtension_allSucceed() {
+    @Test func test_traverseExtension_allSucceed() {
         let result = ["1", "2", "3"].traverse { Int($0) }
 
-        XCTAssertEqual(result, [1, 2, 3])
+        #expect(result == [1, 2, 3])
     }
 
-    func test_traverseExtension_someFail() {
+    @Test func test_traverseExtension_someFail() {
         let result = ["1", "abc"].traverse { Int($0) }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 }
