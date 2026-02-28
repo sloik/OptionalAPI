@@ -5,11 +5,11 @@
 
 # OptionalAPI
 
-Optional extensions for Swift Optional Monad... use it or not... it's optional.
+Optional extensions for Swift's Optional type... use it or not... it's optional.
 
 # Why
 
-Some common idioms pop-up when working with Optionals in Swift. Here is a bunch of useful extensions for some types.
+Certain idioms keep coming up when working with Optionals in Swift. This library collects useful extensions that make those patterns more readable and composable.
 
 # Installation
 
@@ -29,37 +29,40 @@ GitHub Pages: [OptionalAPI](https://sloik.github.io/OptionalAPI/documentation/op
 - Collections: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapicollections
 - Codable: https://sloik.github.io/OptionalAPI/documentation/optionalapi/optionalapicodable
 
-# Examples:
+# Examples
 
-## Running some code if none or some
+## Checking if an optional has a value
 
-Old:
-```swift
-someOptional == nil ? True branch : False branch
-```
-
-New:
+Instead of comparing against `nil`:
 
 ```swift
-someOptional.isSome ? True branch : False branch
-someOptional.isNone ? True branch : False branch
-
-someOptional.isNotSome ? True branch : False branch
-someOptional.isNotNone ? True branch : False branch
+someOptional == nil  // old
+someOptional != nil  // old
 ```
 
-## Sequencing of operations that might also return optional
+Use the named properties:
 
-Operation that returns optional:
+```swift
+someOptional.isSome    // true when .some
+someOptional.isNone    // true when .none
+
+someOptional.isNotSome // true when .none
+someOptional.isNotNone // true when .some
+```
+
+## Sequencing operations that may return an optional
+
+Given a function that returns an optional:
+
 ```swift
 func maybeIncrement(_ i: Int) -> Int? { i + 1 }
 ```
 
-Old the terrible way:
+The old, nested way:
 
 ```swift
 if let trueInt = someIntOptional {
-    let incrementedOnce = maybeIncrement(trueInt) {
+    if let incremented = maybeIncrement(trueInt) {
         // you get the idea ;)
     }
 }
@@ -74,81 +77,73 @@ someOptional
     // ... you get the idea :)
 ```
 
-In this case result of this chaining is a instance of `Int?`. If the `someOptional` was nil then whole computation results with nil. If it had some value (42) ten it would be incremented so many times.
+The result is an `Int?`. If `someOptional` is nil, the whole chain returns nil. If it holds a value, each step gets the unwrapped value to work with.
 
-## Recovering from `none` case
+## Recovering from `none`
 
-Let's say you have a chain of operations and there is a chance that the result might return `none`.
+Sometimes a step in the chain may return `none`:
 
 ```swift
 func returningNone(_ i: Int) -> Int? { Bool.random() ? .none : i }
 
 someOptional
     .andThen(maybeIncrement)
-    .andThen(returningNone)  // <-- returns nil
+    .andThen(returningNone)  // <-- may return nil
     .andThen(maybeIncrement)
 ```
 
-Final result is `nil`. And you can't use a `??`. Use `mapNone` it's like normal `map` on Optional but for the `nil` case.
+If `returningNone` returns nil, the final result is nil. To recover, use `mapNone` — it works like `map` but for the `nil` case:
 
 ```swift
-func returningNone(_ i: Int) -> Int? { .none }
-
 someOptional
     .andThen(maybeIncrement)
     .andThen(returningNone)
-    .mapNone(42)
+    .mapNone(42)             // provide a fallback
     .andThen(maybeIncrement)
 ```
 
-If `someOptional` started with `10` and we had luck (returningNone did not returned nil) then the final result is `12`. But if were not so lucky then the `mapNone` would take over and the final result would be `43`.
+If `someOptional` starts as `10` and `returningNone` succeeds, the result is `12`. If it returns nil, `mapNone` kicks in and the result is `43`.
 
-You can also use more than one `mapNone` to handle any failures along the way. Oh and you can use an more friendly name `defaultSome` like so:
+You can place multiple `mapNone` calls anywhere in a pipeline. There's also an alias with a more expressive name, `defaultSome`:
 
 ```swift
 someOptional
-    // if someOptional is nil then start computation with default value
+    // start with a default if someOptional is nil
     .defaultSome(5)
-    // increment whatever is there
     .andThen(maybeIncrement)
-    // are you feeling lucky?
     .andThen(returningNone)
-    // cover your ass if you had bad luck
+    // recover if the step above returned nil
     .defaultSome(42)
-    // do some work with what's there
     .andThen(maybeIncrement)
-    // what... again
     .andThen(returningNone)
-    // saved
+    // one more safety net
     .defaultSome(10)
 ```
 
-I hope you can see that this gives you a very flexible API to handle Optionals in your code.
-
 ## `andThenTry`
 
-This operator expects an transformation that may throw an error. When this happens it returns `.none` which alows to recover with other operators.
+Use `andThenTry` when a step may throw. If it throws, the error is caught and `.none` is returned, allowing the chain to continue or recover:
 
 ```swift
 let jsonData: Data? = ...
 
 jsonData
-    .andThenTry{ data in
+    .andThenTry { data in
         try JSONDecoder().decode(CodableStruct.self, from: data)
     }
-    // this can also explode!
-    .andThenTry( functionTakingCodbaleStructAndThrowing )
-    // if any did thow an error then just recover with this one
-    .defaultSome( CodableStruct.validInstance )
+    // this step can also throw
+    .andThenTry(functionTakingCodableStructAndThrowing)
+    // recover from any failure
+    .defaultSome(CodableStruct.validInstance)
 ```
 
-You can _revocer_ differently after different tries. Or you can totaly ignore it. Either way you have a nice API.
+You can recover differently after each step, or ignore failures entirely. Either way, you have a clean API.
 
-# But wait there's more!
+# Working with optional collections
 
-Sometimes you are working with a Optional collection. Most common case is a `String` and and Optional Array of something. This **Optional API** has you covered to!
+Sometimes you are working with an optional collection — the most common cases being `String?` and `[SomeType]?`. OptionalAPI has you covered.
 
-In the examples below I will be using those Optionals:
+The examples below use these values:
 
 ```swift
 let noneString     : String? = .none
@@ -160,13 +155,9 @@ let emptyIntArray: [Int]? = []
 let someIntArray : [Int]? = [11, 22, 33]
 ```
 
-I think this should cover all the cases
-
-# Optional collection has values is nil or empty
-
-A lot of ifology is made when working whit a collection inside a Optional context. Those properties should help.
-
 ## `hasElements`
+
+True only when the optional is `.some` and the collection is not empty:
 
 ```swift
 noneString.hasElements      // false
@@ -180,6 +171,8 @@ someIntArray.hasElements  // true
 
 ## `isNoneOrEmpty`
 
+True when the optional is `.none` or the collection is empty. Useful when nil and empty are equivalent in your domain:
+
 ```swift
 noneString.isNoneOrEmpty      // true
 emptySomeString.isNoneOrEmpty // true
@@ -192,90 +185,68 @@ someIntArray.isNoneOrEmpty  // false
 
 ## `recoverFromEmpty`
 
-This is called **only** if the underlying collection is empty. That is if your optional is `nil` or has some value this will not be called. As String is a collection I will only show examples for `[Int]?` :)
+Called **only** when the wrapped collection is empty. It does nothing when the optional is `.none` or when the collection has elements. Since `String` is a collection, the examples below use `[Int]?`:
 
 ```swift
-noneIntArray.recoverFromEmpty([42])  // nil
-emptyIntArray.recoverFromEmpty([42]) // [42]
-someIntArray.recoverFromEmpty([42])  // [11, 22, 33]
+noneIntArray.recoverFromEmpty([42])  // nil      — not called for .none
+emptyIntArray.recoverFromEmpty([42]) // [42]     — collection was empty
+someIntArray.recoverFromEmpty([42])  // [11, 22, 33] — collection had elements
 ```
 
-If you need a default value for the none case then **defaultSome** is the thing you want.
+When you need a default for the `.none` case, use `defaultSome`:
 
 ```swift
-noneIntArray.defaultSome([42])  // [42]
-emptyIntArray.defaultSome([42]) // []
-someIntArray.defaultSome([42])  // [11, 22, 33]
+noneIntArray.defaultSome([42])  // [42]          — was nil
+emptyIntArray.defaultSome([42]) // []             — was .some, left unchanged
+someIntArray.defaultSome([42])  // [11, 22, 33]  — was .some, left unchanged
 ```
 
 # `or`
 
-There are cases when you need an actual result from an Optional `or` a default non optional value. This is exactly the case for `or`
+Use `or` to unwrap an optional with a non-optional fallback value:
 
 ```swift
 let noneInt: Int? = .none
 let someInt: Int? = .some(42)
 
-var result: Int = someInt.or(69) // 42
+let result: Int = someInt.or(69) // 42 — unwrapped from .some
+let other:  Int = noneInt.or(69) // 69 — fallback used
 ```
 
-In this case `result` variable stores value `42`. It's an honest Int not an optional. But what happens when it's `none`:
+After `or`, you always get a real value, not an optional.
 
-```swift
-result = noneInt.or(69) // 69
-```
+## Using `or` with initialisers
 
-Here the _final_ result is `69` as everything evaluates to `none`. Once again after `or` you have a honest value or some default.
-
-## default value with `or`
-
-If the wrapped type has a empty initializer (init that takes no arguments) you can call it to get an instance:
-
-```swift
-someOptional
-    .or(.init()) // creates an instance
-```
-
-To put it in a context if you have some optionals you can use this to get _zero_ value like so:
+If the wrapped type has a no-argument initialiser, you can use it as the fallback:
 
 ```swift
 let noneInt: Int? = nil
-noneInt.or( .init() ) // 0
-noneInt.or( .zero   ) // 0
+noneInt.or(.init()) // 0
+noneInt.or(.zero)   // 0
 
 let noneDouble: Double? = nil
-noneDouble.or( .init() ) // 0
+noneDouble.or(.init()) // 0.0
 
 let defaults: UserDefaults? = nil
-defaults.or( .standard ) // custom or "standard"
+defaults.or(.standard)
 
 let view: UIView? = nil
-view.or( .init() )
+view.or(.init())
+view.or(.init(frame: .zero))
 
-// or any other init ;)
-view.or( .init(frame: .zero) )
+let noneIntArray: [Int]? = .none
+noneIntArray.or(.init()) // []
 
-// Collections
-let noneIntArray : [Int]? = .none
-noneIntArray.or( .init() ) // []
-
-let emptySomeString: String? = ""
-noneString.or( .init() ) // ""
-
-// Enums
-enum Either {
-    case left, right
-}
-let noneEither: Either? = nil
-noneEither.or(.right)
-
+enum Direction { case left, right }
+let noneDirection: Direction? = nil
+noneDirection.or(.right)
 ```
 
-Anything that you can call on this type (static methods) can be used here.
+Any static member or factory method available on the type can be used here.
 
 # `cast`
 
-Have you ever wrote code similar to this one:
+Have you ever written code like this?
 
 ```swift
 if let customVC = mysteryVC as? CustomVC {
@@ -283,37 +254,34 @@ if let customVC = mysteryVC as? CustomVC {
 }
 ```
 
-With `cast` you can streamline your code to this:
+With `cast` you can integrate type casting into a pipeline:
 
 ```swift
- let someViewController: UIViewController? = ...
- someViewController
-     .cast( CustomVC.self )
-     .andThen({ (vc: CustomVC) in
-        // work with a non optional instance of CustomVC
-     })
+let someViewController: UIViewController? = ...
+someViewController
+    .cast(CustomVC.self)
+    .andThen { (vc: CustomVC) in
+        // work with a non-optional CustomVC
+    }
 ```
 
-If the type can be inferred from the context then you do not have to type it in.
+When the type can be inferred from context, you can omit the argument:
 
 ```swift
 let anyString: Any? = ...
-
 let result: String? = anyString.cast()
 ```
 
-As you can see compiler is able to inferred the correct type. But be aware that in more complex cases this can slow down your compilation.
-
-> If you want to have faster compilation then always be explicit about your types. In all of your code not only using this package.
+> Being explicit about types helps the compiler and speeds up compilation — this applies throughout your codebase, not just with this package.
 
 # `encode` & `decode`
 
-One of the common places when you want to encode or decode something is when you have some data from the network. Flow might look something like this:
+A common network flow looks like this:
 
-* make a API call for a resource
-* get JSON data
+- make an API call for a resource
+- receive JSON data
 
-To keep is simple let's say our Data Transfer Model (DTO) looks like this:
+Assume our Data Transfer Object looks like this:
 
 ```swift
 struct CodableStruct: Codable, Equatable {
@@ -322,7 +290,7 @@ struct CodableStruct: Codable, Equatable {
 }
 ```
 
-What happens is that a JSON string is send thru the network as data. To simulate this in code one could write this:
+And we receive it as `Data?`:
 
 ```swift
 let codableStructAsData: Data? =
@@ -334,188 +302,314 @@ let codableStructAsData: Data? =
     """.data(using: .utf8)
 ```
 
-Stage is set:
-
 ## `decode`
-
-Networking code will hand us an instance of `Data?` that we want to decode.
 
 ```swift
 let result: CodableStruct? = codableStructAsData.decode()
 ```
 
-It's that simple. Compiler can infer the type so there's no need to add it explicitly. Buy you can do it in some longer pipelines eg.:
+The compiler infers the type from context, so you rarely need to specify it. You can be explicit when it helps readability:
 
 ```swift
 codableStructAsData
-    .decode( CodableStruct.self )
-    .andThen({ instance in
-        // work with not optional instance
-    })
+    .decode(CodableStruct.self)
+    .andThen { instance in
+        // work with a non-optional instance
+    }
 ```
 
 ## `encode`
 
-Encode goes other way. You have a instance that you want to encode to send it as a json.
+Going the other way — encoding a value to send over the network:
 
 ```swift
-let codableStruct: CodableStruct? =
-    CodableStruct(
-        number: 69,
-        message: "codable message"
-    )
-```
+let codableStruct: CodableStruct? = CodableStruct(number: 69, message: "codable message")
 
-To get the desired encoded vale just use the method:
-
-```swift
 codableStruct
-    .encode() // <- encoding part if you missed it ;)
-    .andThen({ instance in
-        // work with not optional instance
-    })
+    .encode()
+    .andThen { data in
+        // work with the encoded Data
+    }
 ```
 
 # `whenSome` and `whenNone`
 
-When working with optionals it happens that **you want to run some code but not change the optional**. This is where `whenSome` and `whenNone` can be used.
+Sometimes you want to run code as a side effect without changing the optional. `whenSome` and `whenNone` let you do this while keeping the chain intact:
 
 ```swift
 let life: Int? = 42
 
 life
-    .whenSome { value in
-        print("Value of life is:", value)
-    }
+    .whenSome { value in print("Value of life is:", value) }
 ```
 
-This code prints to the console: _Value of life is: 42_.
+This prints `Value of life is: 42`. There is also a no-argument variant for when you only care that a value exists:
 
-`whenSome` also comes in a favor that does not need the argument.
+```swift
+life
+    .whenSome { print("Something is there!") }
+```
+
+For the nil case:
+
+```swift
+let life: Int? = .none
+
+life
+    .whenNone { print("No life here!") }
+```
+
+And they chain together:
 
 ```swift
 let life: Int? = 42
 
 life
-    .whenSome {
-        print("Life is a mistery. But I know it's there!")
-    }
+    .whenSome { value in print("Value of life is:", value) }
+    .whenSome { print("Something is there!") }
+    .whenNone  { print("This won't run") }
 ```
 
-This is a very nice way of triggering some logic without having to write `if` statements. But what about when the optional is none (or how it's known nil)?
+Of course, you can mix these with any other operators in the chain.
 
-`whenNone` is here for the rescue.
+# `filter`
 
-```swift
-    let life: Int? = .none
-
-    life
-        .whenNone {
-            print("No life here!")
-        }
-```
-
-_No life here!_ will be printed in the console.
-
-But what's eaven more cool is that you can chain them!
-
-```swift
-let life: Int? = 42
-
-life
-    .whenSome { value in
-        print("Value of life is:", value)
-    }
-    .whenSome {
-        print("Life is a mistery. But I know it's there!")
-    }
-    .whenNone {
-        print("No life here!")
-    }
-```
-
-Depending on the operator and the value of optional different blocks will be called. And efcourse other operators can be thrown in to the mix.
-
-# filter
-
-Sometimes you need a value only when it passes some predicate.
+Use `filter` to keep a value only when it passes a predicate:
 
 ```swift
 let arrayWithTwoElements: [Int]? = [42, 69]
 
 arrayWithTwoElements
-    .filter { array in array.count > 1 }
-    .andThen { ... } // work with array
+    .filter { $0.count > 1 }
+    .andThen { ... } // only reached when array has more than one element
 ```
 
-There is also a free version of this operator:
+There is also a free function form that takes a predicate and returns a reusable filter function:
 
 ```swift
-filter<W>(_ predicate: @escaping (W) -> Bool ) -> (W?) -> W?
+// Create a reusable filter
+let moreThanOne: ([Int]?) -> [Int]? = filter { $0.count > 1 }
 ```
 
-Use it to create a filter functions with a given predicate baked in.
+# `flatten`
 
-# Async/Await
-
-With new API for handeling asynchronous you can write code that uses asynchronous functions.
+`flatten` collapses a nested optional (`T??`) into a single optional (`T?`). If the outer layer holds `.some`, the inner value is returned as-is. Any `.none` — at either layer — produces `.none`.
 
 ```swift
-// we are in asynchronous context
+let nested: Int?? = .some(.some(42))
+nested.flatten() // .some(42)
 
+let outerSomeInnerNone: Int?? = .some(nil)
+outerSomeInnerNone.flatten() // nil
+
+let outerNone: Int?? = nil
+outerNone.flatten() // nil
+```
+
+There is also a free function form:
+
+```swift
+flatten(nested) // .some(42)
+```
+
+This is useful when chaining operations that each return an optional, and you want to avoid accumulating extra wrapping layers.
+
+# `orOptional`
+
+Unlike `or` — which unwraps to a non-optional — `orOptional` stays in optional land. It returns the first non-nil value, keeping the result as `Wrapped?`. This is useful when you want to try alternatives but keep the result optional for further chaining:
+
+```swift
+let primary:   Int? = nil
+let secondary: Int? = 42
+
+primary.orOptional(secondary) // .some(42)
+
+let alreadySet: Int? = 10
+alreadySet.orOptional(secondary) // .some(10) — first value wins
+```
+
+The fallback is lazily evaluated, so it is only called when needed. An async variant is also available:
+
+```swift
+let result = await primary.asyncOrOptional {
+    await fetchFallback()
+}
+```
+
+# `coalesce`
+
+`coalesce` returns the first non-nil value from a list of optionals. It is a variadic shorthand for chaining multiple `orOptional` calls:
+
+```swift
+let a: Int? = nil
+let b: Int? = nil
+let c: Int? = 42
+
+coalesce(a, b, c) // .some(42)
+coalesce(a, b)    // nil — all were nil
+```
+
+You can also pass an array:
+
+```swift
+let values: [Int?] = [nil, nil, 42, 99]
+coalesce(values) // .some(42) — first non-nil wins
+```
+
+# `ap`
+
+`ap` applies a wrapped function to a wrapped value. Both must be `.some` for the result to be `.some`; if either is `.none`, the result is `.none`.
+
+```swift
+let increment: ((Int) -> Int)? = { $0 + 1 }
+let value: Int? = 41
+
+increment.ap(value) // .some(42)
+
+let noFunction: ((Int) -> Int)? = nil
+noFunction.ap(value) // nil
+```
+
+Free function and curried forms are also available:
+
+```swift
+ap(increment, value) // .some(42)
+
+// Curried — bake the function in, apply values later
+let applyIncrement: (Int?) -> Int? = ap(increment)
+applyIncrement(value) // .some(42)
+```
+
+# `sequence`
+
+`sequence` converts `[T?]` into `[T]?`. If all elements are `.some`, you get a `.some` containing all the unwrapped values. If any element is `.none`, the entire result is `.none`.
+
+```swift
+let allPresent: [Int?] = [1, 2, 3]
+sequence(allPresent) // .some([1, 2, 3])
+
+let hasGap: [Int?] = [1, nil, 3]
+sequence(hasGap) // nil
+
+let empty: [Int?] = []
+sequence(empty) // .some([])
+```
+
+There is also an instance method form on `Array`:
+
+```swift
+[Int?]([1, 2, 3]).sequence() // .some([1, 2, 3])
+```
+
+# `traverse`
+
+`traverse` applies a transform to each element of an array. If any transform returns `.none`, the entire result is `.none`. Think of it as `map` followed by `sequence`:
+
+```swift
+let strings = ["1", "2", "3"]
+traverse(strings) { Int($0) } // .some([1, 2, 3])
+
+let mixed = ["1", "abc", "3"]
+traverse(mixed) { Int($0) } // nil — "abc" can't be converted
+```
+
+There is also an instance method form and a curried form:
+
+```swift
+// Instance method
+["1", "2", "3"].traverse { Int($0) } // .some([1, 2, 3])
+
+// Curried — create a reusable transformer
+let parseInts: ([String]) -> [Int]? = traverse { Int($0) }
+parseInts(["1", "2", "3"]) // .some([1, 2, 3])
+```
+
+# `someWhen` and `noneWhen`
+
+These functions create an optional from a plain value based on a predicate.
+
+`someWhen` wraps the value in `.some` only when the predicate returns `true`:
+
+```swift
+someWhen({ $0 > 18 }, 42) // .some(42)
+someWhen({ $0 > 18 }, 10) // nil
+```
+
+`noneWhen` is the dual — it wraps the value when the predicate returns `false`:
+
+```swift
+noneWhen({ $0 > 100 }, 42)  // .some(42)
+noneWhen({ $0 > 100 }, 200) // nil
+```
+
+Both have a curried form for point-free composition:
+
+```swift
+let adults: (Int) -> Int? = someWhen { $0 >= 18 }
+adults(42) // .some(42)
+adults(10) // nil
+
+let notEmpty: (String) -> String? = noneWhen(\.isEmpty)
+notEmpty("hello") // .some("hello")
+notEmpty("")      // nil
+```
+
+These compose naturally with the rest of the API:
+
+```swift
+someWhen({ $0 > 0 }, 42)
+    .andThen { $0 * 2 } // .some(84)
+
+noneWhen({ $0 > 100 }, 200)
+    .mapNone(0) // 0
+```
+
+# Async / Await
+
+Most operations have async counterparts. Async variants are named with an `async` prefix and can be mixed with synchronous steps:
+
+```swift
 let someInt: Int? = 42
 
 let result: Int? = await someInt
-    .asyncFlatMap {
-        try! await Task.sleep(nanoseconds: 42)
-        return $0 + 1
+    .asyncFlatMap { value in
+        await Task.yield()
+        return value + 1
     }
     .flatMap { fromAsync in
         fromAsync * 10
     }
 ```
 
-As you can see it's easy to mix synchronous code with asynchronous. Just rember that `await` must be at the start of the pipeline. If you don't then you will have a friendly reminder from the compiler.
+The `await` keyword must appear at the start of a pipeline that contains async steps. The compiler will remind you if you forget.
 
 # `tryAsyncMap` & `tryAsyncFlatMap`
 
-`tryAsyncMap` & `tryAsyncFlatMap` are methods that allow you to perform an asynchronous transformation on an optional value in Swift. They take a closure that performs an asynchronous operation on the optional value, and return an optional value of a different type.
-
-Usage
-
-Here's an example of how to use `tryAsyncMap`:
+These handle async steps that may throw. If the transform throws, the error propagates:
 
 ```swift
-enum MyError: Error {
-    case invalidInput
-}
+enum MyError: Error { case invalidInput }
 
-func doAsyncTransformation(value: Int?) async throws -> String {
-    guard let value = value else {
-        throw MyError.invalidInput
-    }
-
-    await Task.sleep(1_000_000_000) // Simulate long-running task.
-
-    return "Transformed value: \(value)"
+func transform(value: Int) async throws -> String {
+    try await Task.sleep(for: .seconds(1))
+    return "Transformed: \(value)"
 }
 
 let optionalValue: Int? = 42
 
 do {
-    let transformedValue = try await optionalValue.tryAsyncMap { value in
-        try doAsyncTransformation(value: value)
+    let result = try await optionalValue.tryAsyncMap { value in
+        try await transform(value: value)
     }
-
-    print(transformedValue) // Prints "Transformed value: 42".
+    print(result) // .some("Transformed: 42")
 } catch {
     print(error)
 }
 ```
 
-# `zip` -- moved
+# `zip` — moved
 
-This functionality was moved to [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy). It has definitions for `zip` functions for more types than just optionals.
+This functionality was moved to the [Zippy 🤐 Swift Package](https://github.com/sloik/Zippy), which provides `zip` for more types than just optionals.
 
 # 🐇🕳 Rabbit Hole
 
@@ -523,6 +617,6 @@ This project is part of the [🐇🕳 Rabbit Hole Packages Collection](https://g
 
 # That's it
 
-Hope it will help you :)
+Hope it helps :)
 
 Cheers! :D
