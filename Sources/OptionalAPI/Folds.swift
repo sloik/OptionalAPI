@@ -22,9 +22,10 @@ public extension Optional {
     ///   - noneCase: Value returned when optional is `.none`.
     ///   - someCase: Async transform for the wrapped value.
     /// - Returns: Transformed value for `.some`, otherwise `noneCase`.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable func asyncFold<R>(
         _ noneCase: R,
-        _ someCase: (Wrapped) async -> R
+        _ someCase: @Sendable (Wrapped) async -> R
     ) async -> R {
         switch self {
         case .some(let wrapped): return await someCase(wrapped)

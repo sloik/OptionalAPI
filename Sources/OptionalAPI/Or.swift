@@ -73,8 +73,9 @@ public extension Optional {
     ///
     /// - Parameter producer: Async producer for the fallback value.
     /// - Returns: Wrapped value if present, otherwise the produced fallback value.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncOr(_ producer: () async -> Wrapped) async -> Wrapped {
+    func asyncOr(_ producer: @Sendable () async -> Wrapped) async -> Wrapped {
         switch self {
         case .some(let wrapped): return wrapped
         case .none             : return await producer()

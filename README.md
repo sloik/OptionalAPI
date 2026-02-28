@@ -583,6 +583,26 @@ let result: Int? = await someInt
 
 The `await` keyword must appear at the start of a pipeline that contains async steps. The compiler will remind you if you forget.
 
+## Swift 6 / Sendable
+
+All async closure parameters are marked `@Sendable`. This means:
+
+- They compile cleanly under Swift 6 strict concurrency checking
+- They can be safely called from any concurrency context — actors, `Task`, `TaskGroup`
+- The compiler will catch accidental capture of non-`Sendable` state at compile time
+
+The library itself has no shared mutable state (`Optional` is a value type), so there is nothing to protect. The `@Sendable` annotation is purely a constraint on the closures *you* pass in.
+
+```swift
+actor MyService {
+    var cache: Int? = nil
+
+    func process() async -> Int {
+        await cache.asyncOr { await fetchFromNetwork() }
+    }
+}
+```
+
 # `tryAsyncMap` & `tryAsyncFlatMap`
 
 These handle async steps that may throw. If the transform throws, the error propagates:

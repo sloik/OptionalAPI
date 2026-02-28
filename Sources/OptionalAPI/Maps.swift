@@ -54,8 +54,9 @@ public extension Optional {
     ///
     /// - Parameter producer: Async producer of the fallback value.
     /// - Returns: Original value for `.some`, otherwise the produced fallback.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncMapNone(_ producer: () async -> Wrapped) async -> Wrapped? {
+    func asyncMapNone(_ producer: @Sendable () async -> Wrapped) async -> Wrapped? {
         switch self {
         case .some(let wrapped): return wrapped
         case .none             : return await producer()
@@ -113,8 +114,9 @@ public extension Optional {
     ///
     /// - Parameter producer: Async producer of the fallback value.
     /// - Returns: Original value for `.some`, otherwise the produced fallback.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncDefaultSome(_ producer: () async -> Wrapped) async -> Wrapped? {
+    func asyncDefaultSome(_ producer: @Sendable () async -> Wrapped) async -> Wrapped? {
         switch self {
         case .some(let wrapped): return wrapped
         case .none             : return await producer()
