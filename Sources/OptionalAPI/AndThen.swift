@@ -55,8 +55,9 @@ public extension Optional {
     ///
     /// - Parameter transform: Async transform producing an optional value.
     /// - Returns: Transformed optional when `.some`, otherwise `.none`.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncAndThen<T>(_ transform: (Wrapped) async -> T?) async -> T? {
+    func asyncAndThen<T>(_ transform: @Sendable (Wrapped) async -> T?) async -> T? {
         switch self {
         case .some(let wrapped): return await transform(wrapped)
         case .none             : return .none
@@ -95,8 +96,9 @@ public extension Optional {
     ///
     /// - Parameter transform: Async throwing transform producing a value.
     /// - Returns: `.none` when the optional is `.none` or when the transform throws.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func tryAsyncAndThenTry<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
+    func tryAsyncAndThenTry<T>(_ transform: @Sendable (Wrapped) async throws -> T) async throws -> T? {
         switch self {
         case .some(let wrapped):
             do {
@@ -127,8 +129,9 @@ public extension Optional {
     /// - Parameter transform: Async throwing transform producing a value.
     /// - Returns: Transformed optional when `.some`, otherwise `.none`.
     /// - Throws: Rethrows errors from the transform.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func tryAsyncAndThenTryOrThrow<T>(_ transform: (Wrapped) async throws -> T) async throws -> T? {
+    func tryAsyncAndThenTryOrThrow<T>(_ transform: @Sendable (Wrapped) async throws -> T) async throws -> T? {
         switch self {
         case .some(let wrapped): return try await transform(wrapped)
         case .none             : return .none

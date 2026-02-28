@@ -99,8 +99,9 @@ public extension Optional where Wrapped: Collection {
     ///
     /// - Parameter producer: Async producer used when the collection is empty.
     /// - Returns: Original collection when non-empty, produced value when empty, or `.none`.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncRecoverFromEmpty(_ producer: () async -> Wrapped) async -> Wrapped? {
+    func asyncRecoverFromEmpty(_ producer: @Sendable () async -> Wrapped) async -> Wrapped? {
         switch self {
         case .some(let collection):
             return collection.isEmpty ? await producer() : collection

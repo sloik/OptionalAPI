@@ -33,8 +33,9 @@ public extension Optional {
     ///
     /// - Parameter block: Async side effect to trigger when optional `isSome`.
     /// - Returns: Same optional without altering it.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncWhenSome(_ block: () async -> Void) async -> Wrapped? {
+    func asyncWhenSome(_ block: @Sendable () async -> Void) async -> Wrapped? {
         if isSome { await block() }
         return self
     }
@@ -71,8 +72,9 @@ public extension Optional {
     ///
     /// - Parameter block: Async side effect to trigger when optional `isSome`.
     /// - Returns: Same optional without altering it.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncWhenSome(_ block: (Wrapped) async -> Void) async -> Wrapped? {
+    func asyncWhenSome(_ block: @Sendable (Wrapped) async -> Void) async -> Wrapped? {
         switch self {
         case .some(let wrapped):
             await block(wrapped)
@@ -103,8 +105,9 @@ public extension Optional {
     /// - Parameter block: Async throwing side effect to trigger when optional `isSome`.
     /// - Returns: Same optional without altering it.
     /// - Throws: Rethrows errors from the block.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func tryAsyncWhenSome(_ block: (Wrapped) async throws -> Void) async throws -> Wrapped? {
+    func tryAsyncWhenSome(_ block: @Sendable (Wrapped) async throws -> Void) async throws -> Wrapped? {
         switch self {
         case .some(let wrapped):
             try await block(wrapped)
@@ -145,8 +148,9 @@ public extension Optional {
     ///
     /// - Parameter block: Async side effect to trigger when optional `isNone`.
     /// - Returns: Same optional without altering it.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncWhenNone(_ block: () async -> Void) async -> Wrapped? {
+    func asyncWhenNone(_ block: @Sendable () async -> Void) async -> Wrapped? {
         if isNone { await block() }
         return self
     }

@@ -44,8 +44,9 @@ public extension Optional {
     ///
     /// - Parameter predicate: Async predicate applied to the wrapped value.
     /// - Returns: Optional if the predicate returns `true`, otherwise `.none`.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncFilter(_ predicate: (Wrapped) async -> Bool) async -> Wrapped? {
+    func asyncFilter(_ predicate: @Sendable (Wrapped) async -> Bool) async -> Wrapped? {
         switch self {
         case .some(let wrapped):
             return await predicate(wrapped) ? self : .none

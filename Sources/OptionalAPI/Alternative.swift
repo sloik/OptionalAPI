@@ -27,8 +27,22 @@ public extension Optional {
     }
 
     /// Async version of `orOptional`.
+    ///
+    /// Returns `self` when `.some`, otherwise awaits the `other` closure and returns its result.
+    /// The fallback is only evaluated when needed.
+    ///
+    /// ```swift
+    /// let primary: Int? = nil
+    /// let result = await primary.asyncOrOptional {
+    ///     await fetchFallback()
+    /// }
+    /// ```
+    ///
+    /// - Parameter other: An async closure producing an alternative optional.
+    /// - Returns: Self if `.some`, otherwise the result of `other()`.
+    /// - Note: The closure is `@Sendable` and is safe to call from any concurrency context.
     @inlinable @discardableResult
-    func asyncOrOptional(_ other: () async -> Wrapped?) async -> Wrapped? {
+    func asyncOrOptional(_ other: @Sendable () async -> Wrapped?) async -> Wrapped? {
         switch self {
         case .some: return self
         case .none: return await other()
