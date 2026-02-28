@@ -1,4 +1,5 @@
-import XCTest
+import Foundation
+import Testing
 @testable import OptionalAPI
 
 let codableStruct: CodableStruct = .init(number: 69, message: "codable message")
@@ -15,104 +16,77 @@ let codableStructAsData: Data? =
     """.data(using: .utf8)!
 let noneData: Data? = .none
 
+@Suite struct OptionalCodableTests {
 
-final class OptionalCodableTests: XCTestCase {
-
-    func test_shouldEncode() {
-        // Arrange & Act
+    @Test func test_shouldEncode() {
         let result = sut.encode()
-        
-        // Assert
-        XCTAssertNotNil(result)
-    }
-    
-    func test_shouldDecode() {
-        // Arrange
-        let sut: Data? = codableStructAsData
-        
-        // Act
-        let result: CodableStruct? = sut.decode(CodableStruct.self)
-        
-        // Assert
-        XCTAssertNotNil(result)
-        
-        XCTAssertEqual(
-            result,
-            CodableStruct(number: 55, message: "data message")
-        )
-    }
-    
-    func test_shouldDecode_withDefaultType() {
-        // Arrange
-        let sut: Data? = codableStructAsData
-        
-        // Act
-        let result: CodableStruct? = sut.decode()
-        
-        // Assert
-        XCTAssertNotNil(result)
-        
-        XCTAssertEqual(
-            result,
-            CodableStruct(number: 55, message: "data message")
-        )
-    }
-    
-    func test_decode_shouldReturn_noneForInvalidData() {
-        // Arrange
-        let sut: Data? = Data()
-        
-        // Act
-        let result: CodableStruct? = sut.decode()
-        
-        // Assert
-        XCTAssertNil(result)
-    }
-    
-    func test_decode_shouldReturn_noneForNoneData() {
-        // Arrange
-        let sut: Data? = .none
-        
-        // Act
-        let result: CodableStruct? = sut.decode()
-        
-        // Assert
-        XCTAssertNil(result)
+
+        #expect(result != nil)
     }
 
-    func test_asyncEncode_shouldReturnData() async {
+    @Test func test_shouldDecode() {
+        let sutData: Data? = codableStructAsData
+
+        let result: CodableStruct? = sutData.decode(CodableStruct.self)
+
+        #expect(result != nil)
+        #expect(result == CodableStruct(number: 55, message: "data message"))
+    }
+
+    @Test func test_shouldDecode_withDefaultType() {
+        let sutData: Data? = codableStructAsData
+
+        let result: CodableStruct? = sutData.decode()
+
+        #expect(result != nil)
+        #expect(result == CodableStruct(number: 55, message: "data message"))
+    }
+
+    @Test func test_decode_shouldReturn_noneForInvalidData() {
+        let sutData: Data? = Data()
+
+        let result: CodableStruct? = sutData.decode()
+
+        #expect(result == nil)
+    }
+
+    @Test func test_decode_shouldReturn_noneForNoneData() {
+        let sutData: Data? = .none
+
+        let result: CodableStruct? = sutData.decode()
+
+        #expect(result == nil)
+    }
+
+    @Test func test_asyncEncode_shouldReturnData() async {
         let result = await sut.asyncEncode()
 
-        XCTAssertNotNil(result)
+        #expect(result != nil)
     }
 
-    func test_asyncEncode_shouldReturnNoneForNoneCase() async {
+    @Test func test_asyncEncode_shouldReturnNoneForNoneCase() async {
         let result = await noneCase.asyncEncode()
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_asyncDecode_shouldReturn_expectedValue() async {
-        let sut: Data? = codableStructAsData
+    @Test func test_asyncDecode_shouldReturn_expectedValue() async {
+        let sutData: Data? = codableStructAsData
 
-        let result: CodableStruct? = await sut.asyncDecode()
+        let result: CodableStruct? = await sutData.asyncDecode()
 
-        XCTAssertEqual(
-            result,
-            CodableStruct(number: 55, message: "data message")
-        )
+        #expect(result == CodableStruct(number: 55, message: "data message"))
     }
 
-    func test_asyncDecode_shouldReturn_noneForNoneData() async {
-        let sut: Data? = .none
+    @Test func test_asyncDecode_shouldReturn_noneForNoneData() async {
+        let sutData: Data? = .none
 
-        let result: CodableStruct? = await sut.asyncDecode()
+        let result: CodableStruct? = await sutData.asyncDecode()
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
-    
-    func test_freeFunctions_should_yieldSameResultsAsExtension() {
-        // MARK: Encode
+
+    @Test func test_freeFunctions_should_yieldSameResultsAsExtension() {
         let extensionEncode = sut.encode().flatMap { data in
             try? JSONDecoder().decode(CodableStruct.self, from: data)
         }
@@ -120,39 +94,27 @@ final class OptionalCodableTests: XCTestCase {
             try? JSONDecoder().decode(CodableStruct.self, from: data)
         }
 
-        XCTAssertEqual(
-            extensionEncode,
-            functionEncode
+        #expect(extensionEncode == functionEncode)
+        #expect(noneCase.encode() == encode(noneCase))
+
+        #expect(
+            codableStructAsData.decode(CodableStruct.self) == decode(codableStructAsData, CodableStruct.self)
         )
-        
-        XCTAssertEqual(
-            noneCase.encode(),
-            encode(noneCase)
+        #expect(
+            codableStructAsData.decode(CodableStruct.self) == decode(CodableStruct.self)(codableStructAsData) // curried
         )
-        
-        // MARK: Decode
-        XCTAssertEqual(
-            codableStructAsData.decode(CodableStruct.self),
-            decode(codableStructAsData, CodableStruct.self)
+
+        #expect(
+            noneData.decode(CodableStruct.self) == decode(noneData, CodableStruct.self)
         )
-        XCTAssertEqual(
-            codableStructAsData.decode(CodableStruct.self),
-            decode(CodableStruct.self)(codableStructAsData) // curried
-        )
-        
-        XCTAssertEqual(
-            noneData.decode(CodableStruct.self),
-            decode(noneData, CodableStruct.self)
-        )
-        XCTAssertEqual(
-            noneData.decode(CodableStruct.self),
-            decode(CodableStruct.self)(noneData) // curried
+        #expect(
+            noneData.decode(CodableStruct.self) == decode(CodableStruct.self)(noneData) // curried
         )
     }
-    
-    func test_encodeDecode_randomStuff() {
-        XCTAssertEqual(
-            sut,
+
+    @Test func test_encodeDecode_randomStuff() {
+        #expect(
+            sut ==
             sut
                 .encode()
                 .decode(CodableStruct.self)
@@ -162,9 +124,9 @@ final class OptionalCodableTests: XCTestCase {
                 .decode(CodableStruct.self),
             "Should not loose any information!"
         )
-        
-        XCTAssertEqual(
-            CodableStruct(number: 55, message: "data message"),
+
+        #expect(
+            CodableStruct(number: 55, message: "data message") ==
             codableStructAsData
                 .decode(CodableStruct.self)
                 .encode()

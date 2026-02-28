@@ -1,65 +1,65 @@
-import XCTest
+import Testing
 @testable import OptionalAPI
 
-final class FlattenTests: XCTestCase {
+@Suite struct FlattenTests {
 
     // MARK: - flatten extension
 
-    func test_flatten_someSome_returnsSome() {
+    @Test func test_flatten_someSome_returnsSome() {
         let nested: Int?? = .some(.some(42))
 
         let result: Int? = nested.flatten()
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_flatten_someNone_returnsNone() {
+    @Test func test_flatten_someNone_returnsNone() {
         let nested: Int?? = .some(nil)
 
         let result: Int? = nested.flatten()
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_flatten_none_returnsNone() {
+    @Test func test_flatten_none_returnsNone() {
         let nested: Int?? = nil
 
         let result: Int? = nested.flatten()
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_flatten_withStringType() {
+    @Test func test_flatten_withStringType() {
         let nested: String?? = .some(.some("hello"))
 
         let result: String? = nested.flatten()
 
-        XCTAssertEqual(result, "hello")
+        #expect(result == "hello")
     }
 
     // MARK: - flatten free function
 
-    func test_flatten_freeFunction_someSome() {
+    @Test func test_flatten_freeFunction_someSome() {
         let nested: Int?? = .some(.some(42))
 
         let result: Int? = flatten(nested)
 
-        XCTAssertEqual(result, 42)
+        #expect(result == 42)
     }
 
-    func test_flatten_freeFunction_someNone() {
+    @Test func test_flatten_freeFunction_someNone() {
         let nested: Int?? = .some(nil)
 
         let result: Int? = flatten(nested)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_flatten_freeFunction_none() {
+    @Test func test_flatten_freeFunction_none() {
         let nested: Int?? = nil
 
         let result: Int? = flatten(nested)
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 }

@@ -1,79 +1,68 @@
-import XCTest
+import Testing
 import OptionalAPI
 
+@Suite struct FilterTests {
 
-class FilterTests: XCTestCase {
+    let sutTrue: (Int?) -> Int? = OptionalAPI.filter(alwaysTruePredicate)
+    let sutFalse: (Int?) -> Int? = OptionalAPI.filter(alwaysFalsePredicate)
 
-    let sutTrue: (Int?) -> Int? = OptionalAPI.filter( alwaysTruePredicate )
-    let sutFalse: (Int?) -> Int? = OptionalAPI.filter( alwaysFalsePredicate )
-
-    func test_filteringSomeOptional_withSuccessPredicate_shouldBeSome() {
-        XCTAssertNotNil(
-            sutTrue( 42 )
-        )
-    }
-    
-    func test_filteringNoneOptional_withSuccessPredicate_shouldBeNone() {
-        XCTAssertNil(
-            sutTrue( .none )
-        )
-    }
-    
-    func test_filteringSomeOptional_withFailurePredicate_shouldBeNone() {
-        XCTAssertNil(
-            sutFalse( 42 )
-        )
-    }
-    
-    func test_filteringNoneOptional_withFailurePredicate_shouldBeNone() {
-        XCTAssertNil(
-            sutFalse( .none )
-        )
+    @Test func test_filteringSomeOptional_withSuccessPredicate_shouldBeSome() {
+        #expect(sutTrue(42) != nil)
     }
 
-    func test_api() {
+    @Test func test_filteringNoneOptional_withSuccessPredicate_shouldBeNone() {
+        #expect(sutTrue(.none) == nil)
+    }
+
+    @Test func test_filteringSomeOptional_withFailurePredicate_shouldBeNone() {
+        #expect(sutFalse(42) == nil)
+    }
+
+    @Test func test_filteringNoneOptional_withFailurePredicate_shouldBeNone() {
+        #expect(sutFalse(.none) == nil)
+    }
+
+    @Test func test_api() {
         let arrayWithTwoElements: [Int]? = [42, 69]
 
-        XCTAssertNotNil(
+        #expect(
             arrayWithTwoElements
-                .filter { array in array.count > 1 }
+                .filter { array in array.count > 1 } != nil
         )
 
-        XCTAssertNil(
+        #expect(
             arrayWithTwoElements
-                .filter { array in array.isEmpty }
+                .filter { array in array.isEmpty } == nil
         )
     }
 
-    func test_asyncFilter_whenSome_shouldReturnSomeForPassingPredicate() async {
+    @Test func test_asyncFilter_whenSome_shouldReturnSomeForPassingPredicate() async {
         let result = await someInt.asyncFilter { value in
             try? await Task.sleep(nanoseconds: 42)
             return value > 41
         }
 
-        XCTAssertEqual(result, someInt)
+        #expect(result == someInt)
     }
 
-    func test_asyncFilter_whenSome_shouldReturnNoneForFailingPredicate() async {
+    @Test func test_asyncFilter_whenSome_shouldReturnNoneForFailingPredicate() async {
         let result = await someInt.asyncFilter { value in
             try? await Task.sleep(nanoseconds: 42)
             return value > 99
         }
 
-        XCTAssertNil(result)
+        #expect(result == nil)
     }
 
-    func test_asyncFilter_whenNone_shouldNotCallPredicate_andReturnNone() async {
-        let didCallPredicate = expectation(description: "predicate was called")
-        didCallPredicate.isInverted = true
-
-        let result: Int? = await noneInt.asyncFilter { _ in
-            didCallPredicate.fulfill()
-            return true
+    @Test func test_asyncFilter_whenNone_shouldNotCallPredicate_andReturnNone() async {
+        let result: Int? = await confirmation("predicate was called", expectedCount: 0) { confirm in
+            await noneInt.asyncFilter { _ in
+                confirm()
+                return true
+            }
         }
 
-        XCTAssertNil(result)
-        await fulfillment(of: [didCallPredicate], timeout: 0.5)
+        #expect(result == nil)
     }
 }
 

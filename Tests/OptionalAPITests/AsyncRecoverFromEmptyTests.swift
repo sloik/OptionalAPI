@@ -1,46 +1,39 @@
-import Foundation
-
-import XCTest
+import Testing
 import OptionalAPI
 
-final class AsyncRecoverFromEmptyTests: XCTestCase {
+@Suite struct AsyncRecoverFromEmptyTests {
 
-    func test_asyncRecoverFromEmpty_whenEmptyCollection_shouldCallProducer() async {
-        let didCallProducer = expectation(description: "producer was called")
-
-        let result = await emptyIntArray.asyncRecoverFromEmpty {
-            didCallProducer.fulfill()
-            try? await Task.sleep(nanoseconds: 42)
-            return [24]
+    @Test func test_asyncRecoverFromEmpty_whenEmptyCollection_shouldCallProducer() async {
+        let result = await confirmation("producer was called") { confirm in
+            await emptyIntArray.asyncRecoverFromEmpty {
+                confirm()
+                try? await Task.sleep(nanoseconds: 42)
+                return [24]
+            }
         }
 
-        XCTAssertEqual(result, [24])
-        await fulfillment(of: [didCallProducer], timeout: 0.5)
+        #expect(result == [24])
     }
 
-    func test_asyncRecoverFromEmpty_whenNotEmpty_shouldNotCallProducer() async {
-        let didCallProducer = expectation(description: "producer was called")
-        didCallProducer.isInverted = true
-
-        let result = await someIntArray.asyncRecoverFromEmpty {
-            didCallProducer.fulfill()
-            return [24]
+    @Test func test_asyncRecoverFromEmpty_whenNotEmpty_shouldNotCallProducer() async {
+        let result = await confirmation("producer was called", expectedCount: 0) { confirm in
+            await someIntArray.asyncRecoverFromEmpty {
+                confirm()
+                return [24]
+            }
         }
 
-        XCTAssertEqual(result, someIntArray)
-        await fulfillment(of: [didCallProducer], timeout: 0.5)
+        #expect(result == someIntArray)
     }
 
-    func test_asyncRecoverFromEmpty_whenNone_shouldNotCallProducer() async {
-        let didCallProducer = expectation(description: "producer was called")
-        didCallProducer.isInverted = true
-
-        let result = await noneIntArray.asyncRecoverFromEmpty {
-            didCallProducer.fulfill()
-            return [24]
+    @Test func test_asyncRecoverFromEmpty_whenNone_shouldNotCallProducer() async {
+        let result = await confirmation("producer was called", expectedCount: 0) { confirm in
+            await noneIntArray.asyncRecoverFromEmpty {
+                confirm()
+                return [24]
+            }
         }
 
-        XCTAssertNil(result)
-        await fulfillment(of: [didCallProducer], timeout: 0.5)
+        #expect(result == nil)
     }
 }
