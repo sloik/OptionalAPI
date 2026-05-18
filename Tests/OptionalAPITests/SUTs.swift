@@ -52,6 +52,16 @@ precedencegroup ForwardApplication {
 infix operator |>: ForwardApplication
 
 @discardableResult
+public func |> <A, B>(x: A, f: @Sendable (A) -> B) -> B {
+    f(x)
+}
+
+// Fallback for non-Sendable closures (e.g., curried free-function results that
+// capture mutable state). The Sendable overload above is preferred inside
+// swift-testing macros (`#expect`) where the macro expansion requires a
+// Sendable closure context.
+@_disfavoredOverload
+@discardableResult
 public func |> <A, B>(x: A, f: (A) -> B) -> B {
     f(x)
 }
