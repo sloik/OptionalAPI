@@ -1,0 +1,22 @@
+name: Oracle TLA verification
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: oracle-tla-master
+  cancel-in-progress: true
+jobs:
+  tlc:
+    if: github.repository == 'sloik/OptionalAPI' && github.ref == 'refs/heads/master'
+    runs-on: [self-hosted, Linux, ARM64, oracle, swift-tla, OptionalAPI]
+    timeout-minutes: 15
+    steps:
+      - name: Checkout default-branch revision
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Model-check TLA+ specs (models must pass, mutants must fail)
+        run: formal/run_tlc.sh
