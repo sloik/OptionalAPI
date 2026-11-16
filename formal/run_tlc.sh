@@ -125,7 +125,7 @@ for cfg in "${cfgs[@]}"; do
       echo "FAIL  $cfg  (expected no error)"; echo "$out" | tail -30; fail=$((fail+1))
     fi
   else
-    if [[ $rc -ne 0 ]] && grep -q "Invariant $expect is violated" <<<"$out"; then
+    if [[ $rc -eq 12 ]] && grep -q "Invariant $expect is violated" <<<"$out"; then
       echo "PASS  $cfg  (mutant caught by $expect)"; pass=$((pass+1))
     else
       echo "FAIL  $cfg  (mutant expected to violate $expect)"; echo "$out" | tail -30; fail=$((fail+1))
